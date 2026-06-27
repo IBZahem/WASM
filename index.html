@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bin Zahim</title>
+    <title>IBZahem</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Playfair+Display+SC:wght@400;700&display=swap" rel="stylesheet">
@@ -21,6 +21,126 @@
             max-width: 780px;
             margin: 0 auto;
             padding: 0 28px 60px;
+        }
+
+        body.locked {
+            min-height: 100vh;
+        }
+
+        body.locked .site-shell {
+            display: none;
+        }
+
+        body:not(.locked) .password-page {
+            display: none;
+        }
+
+        .password-page {
+            min-height: calc(100vh - 60px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .password-card {
+            width: 100%;
+            border-top: 6px solid #111;
+            border-bottom: 4px double #111;
+            padding: 12px 0 24px;
+            text-align: center;
+        }
+
+        .password-kicker {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #111;
+            padding-bottom: 8px;
+            font-family: 'Playfair Display SC', serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: #444;
+        }
+
+        .password-title {
+            font-size: clamp(2.8rem, 10vw, 5.6rem);
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            line-height: 1;
+            padding: 16px 0 10px;
+        }
+
+        .password-subtitle {
+            border-top: 1px solid #111;
+            border-bottom: 1px solid #111;
+            padding: 9px 0;
+            font-family: 'Playfair Display SC', serif;
+            font-size: 0.62rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #444;
+        }
+
+        .password-form {
+            max-width: 420px;
+            margin: 28px auto 0;
+            text-align: left;
+        }
+
+        .password-label {
+            display: block;
+            margin-bottom: 8px;
+            font-family: 'Playfair Display SC', serif;
+            font-size: 0.64rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #444;
+        }
+
+        .password-row {
+            display: flex;
+            border: 1px solid #111;
+        }
+
+        .password-input {
+            min-width: 0;
+            flex: 1;
+            border: 0;
+            border-right: 1px solid #111;
+            padding: 12px 13px;
+            font: 1rem Georgia, serif;
+            color: #111;
+            background: #fff;
+        }
+
+        .password-input:focus {
+            outline: 2px solid #111;
+            outline-offset: 2px;
+        }
+
+        .password-submit {
+            border: 0;
+            background: #111;
+            color: #fff;
+            padding: 0 16px;
+            font-family: 'Playfair Display SC', serif;
+            font-size: 0.62rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .password-submit:hover,
+        .password-submit:focus-visible {
+            background: #444;
+        }
+
+        .password-error {
+            min-height: 1.4em;
+            margin-top: 10px;
+            font-style: italic;
+            font-size: 0.9rem;
+            color: #7a1f1f;
         }
 
         /* ── Masthead ── */
@@ -176,39 +296,120 @@
             text-transform: uppercase;
             color: #888;
         }
+
+        @media (max-width: 520px) {
+            body {
+                padding: 0 20px 44px;
+            }
+
+            .password-row {
+                display: block;
+                border: 0;
+            }
+
+            .password-input,
+            .password-submit {
+                width: 100%;
+            }
+
+            .password-input {
+                border: 1px solid #111;
+            }
+
+            .password-submit {
+                min-height: 44px;
+                margin-top: 10px;
+            }
+        }
     </style>
 </head>
-<body>
+<body class="locked">
 
-    <header class="masthead">
-        <div class="masthead-meta">
-            <span>Est. 2026</span>
-            <span>Independent</span>
-            <span>June 27, 2026</span>
-        </div>
-        <hr class="masthead-rule">
-        <h1 class="site-title">Bin Zahim</h1>
-        <p class="tagline">Notes on things I read and find interesting.</p>
-        <div class="masthead-bottom"></div>
-    </header>
-
-    <p class="section-label">Latest</p>
-
-    <main>
-        <article class="post">
-            <div class="post-meta">
-                <span class="post-tag">Essay</span>
-                <span class="post-date">June 26, 2026</span>
+    <section class="password-page" aria-labelledby="password-title">
+        <div class="password-card">
+            <div class="password-kicker">
+                <span>Private Edition</span>
+                <span>Authorized Readers</span>
             </div>
-            <h2 class="post-title"><a href="post1.html">امرؤ القيس</a></h2>
-            <p class="post-excerpt">A short description of what this post is about.</p>
-            <a class="read-more" href="post1.html">Continue Reading</a>
-        </article>
-    </main>
+            <h1 class="password-title" id="password-title">Bin Zahim</h1>
+            <p class="password-subtitle">Enter password to read today's issue</p>
+            <form class="password-form" id="password-form">
+                <label class="password-label" for="password-input">Password</label>
+                <div class="password-row">
+                    <input class="password-input" id="password-input" type="password" autocomplete="current-password" required>
+                    <button class="password-submit" type="submit">Unlock</button>
+                </div>
+                <p class="password-error" id="password-error" aria-live="polite"></p>
+            </form>
+        </div>
+    </section>
 
-    <footer class="footer">
-        <p class="footer-text">IBZahem &mdash; All Rights Reserved</p>
-    </footer>
+    <div class="site-shell">
+        <header class="masthead">
+            <div class="masthead-meta">
+                <span>Est. 2026</span>
+                <span>Independent</span>
+                <span>June 27, 2026</span>
+            </div>
+            <hr class="masthead-rule">
+            <h1 class="site-title">Bin Zahim</h1>
+            <p class="tagline">Notes on things I read and find interesting.</p>
+            <div class="masthead-bottom"></div>
+        </header>
+
+        <p class="section-label">Latest</p>
+
+        <main>
+            <article class="post">
+                <div class="post-meta">
+                    <span class="post-tag">Essay</span>
+                    <span class="post-date">June 26, 2026</span>
+                </div>
+                <h2 class="post-title"><a href="post1.html">&#1575;&#1605;&#1585;&#1572; &#1575;&#1604;&#1602;&#1610;&#1587;</a></h2>
+                <p class="post-excerpt">A short description of what this post is about.</p>
+                <a class="read-more" href="post1.html">Continue Reading</a>
+            </article>
+        </main>
+
+        <footer class="footer">
+            <p class="footer-text">IBZahem &mdash; All Rights Reserved</p>
+        </footer>
+    </div>
+
+    <script>
+        (function () {
+            var correctPassword = 'sirdab2026';
+            var storageKey = 'ibzahemUnlocked';
+            var form = document.getElementById('password-form');
+            var input = document.getElementById('password-input');
+            var error = document.getElementById('password-error');
+
+            function unlock() {
+                document.body.classList.remove('locked');
+                sessionStorage.setItem(storageKey, 'true');
+            }
+
+            if (sessionStorage.getItem(storageKey) === 'true') {
+                unlock();
+                return;
+            }
+
+            input.focus();
+
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                if (input.value === correctPassword) {
+                    unlock();
+                    return;
+                }
+
+                error.textContent = 'Incorrect password. Please try again.';
+                input.value = '';
+                input.focus();
+            });
+        }());
+    </script>
 
 </body>
 </html>
