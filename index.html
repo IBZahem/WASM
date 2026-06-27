@@ -3,37 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBZahem's Blog</title>
+    <title>IBZahem</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Playfair+Display+SC:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: Georgia, serif;
-            max-width: 700px;
-            margin: 60px auto;
-            padding: 0 20px;
-            color: #222;
-            line-height: 1.8;
+            background: #fff;
+            color: #111;
+            font-family: 'Playfair Display', Georgia, serif;
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 0 28px 60px;
         }
-        h1 { font-size: 2rem; }
-        .subtitle { color: #666; margin-top: -10px; }
+
+        /* ── Masthead ── */
+
+        .masthead {
+            border-top: 6px solid #111;
+            padding-top: 10px;
+            margin-top: 36px;
+            text-align: center;
+        }
+
+        .masthead-meta {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'Playfair Display SC', serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: #444;
+            padding-bottom: 8px;
+        }
+
+        .masthead-rule {
+            border: none;
+            border-top: 1px solid #111;
+            margin: 0;
+        }
+
+        .site-title {
+            font-size: clamp(3.5rem, 12vw, 6.5rem);
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            line-height: 1;
+            padding: 14px 0 10px;
+        }
+
+        .tagline {
+            font-style: italic;
+            font-size: 0.88rem;
+            color: #555;
+            letter-spacing: 0.03em;
+            padding: 8px 0;
+        }
+
+        .masthead-bottom {
+            border-top: 1px solid #111;
+            border-bottom: 4px double #111;
+            height: 6px;
+            margin-top: 0;
+        }
+
+        /* ── Section label ── */
+
+        .section-label {
+            font-family: 'Playfair Display SC', serif;
+            font-size: 0.6rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: #444;
+            text-align: center;
+            padding: 12px 0 11px;
+            border-bottom: 1px solid #111;
+        }
+
+        /* ── Post ── */
+
         .post {
-            border-top: 1px solid #eee;
-            padding: 20px 0;
+            padding: 30px 0 26px;
+            border-bottom: 1px solid #ccc;
         }
-        .post h2 { margin-bottom: 5px; }
-        .post a { text-decoration: none; color: #222; }
-        .post a:hover { color: #555; }
-        .date { color: #999; font-size: 0.85rem; }
+
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+
+        .post-tag {
+            font-family: 'Playfair Display SC', serif;
+            font-size: 0.58rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #fff;
+            background: #111;
+            padding: 3px 7px;
+        }
+
+        .post-date {
+            font-family: 'Playfair Display SC', serif;
+            font-size: 0.68rem;
+            letter-spacing: 0.08em;
+            color: #666;
+        }
+
+        .post-title {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1.18;
+            margin-bottom: 12px;
+        }
+
+        .post-title a {
+            text-decoration: none;
+            color: #111;
+        }
+
+        .post-title a:hover {
+            text-decoration: underline;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 3px;
+        }
+
+        .post-excerpt {
+            font-style: italic;
+            font-size: 0.93rem;
+            color: #444;
+            line-height: 1.75;
+            max-width: 560px;
+        }
+
+        .read-more {
+            display: inline-block;
+            margin-top: 14px;
+            font-family: 'Playfair Display SC', serif;
+            font-size: 0.62rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #111;
+            text-decoration: none;
+            border-bottom: 1px solid #111;
+            padding-bottom: 2px;
+        }
+
+        .read-more:hover {
+            color: #555;
+            border-bottom-color: #555;
+        }
+
+        /* ── Footer ── */
+
+        .footer {
+            margin-top: 48px;
+            border-top: 4px double #111;
+            padding-top: 16px;
+            text-align: center;
+        }
+
+        .footer-text {
+            font-family: 'Playfair Display SC', serif;
+            font-size: 0.62rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: #888;
+        }
     </style>
 </head>
 <body>
-    <h1>IBZahem</h1>
-    <p class="subtitle">Notes on things I read and find interesting.</p>
 
-    <div class="post">
-        <h2><a href="post1.html">My First Post</a></h2>
-        <p class="date">June 26, 2026</p>
-        <p>A short description of what this post is about.</p>
-    </div>
+    <header class="masthead">
+        <div class="masthead-meta">
+            <span>Est. 2026</span>
+            <span>Independent</span>
+            <span>June 27, 2026</span>
+        </div>
+        <hr class="masthead-rule">
+        <h1 class="site-title">IBZahem</h1>
+        <p class="tagline">Notes on things I read and find interesting.</p>
+        <div class="masthead-bottom"></div>
+    </header>
+
+    <p class="section-label">Latest</p>
+
+    <main>
+        <article class="post">
+            <div class="post-meta">
+                <span class="post-tag">Essay</span>
+                <span class="post-date">June 26, 2026</span>
+            </div>
+            <h2 class="post-title"><a href="post1.html">My First Post</a></h2>
+            <p class="post-excerpt">A short description of what this post is about.</p>
+            <a class="read-more" href="post1.html">Continue Reading</a>
+        </article>
+    </main>
+
+    <footer class="footer">
+        <p class="footer-text">IBZahem &mdash; All Rights Reserved</p>
+    </footer>
 
 </body>
 </html>
