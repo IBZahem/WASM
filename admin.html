@@ -82,6 +82,14 @@
         }
         .post-item h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; }
         .post-item .date { font-size: 11px; color: #888; margin-top: 4px; font-family: 'Playfair Display SC', serif; letter-spacing: 0.08em; }
+        .post-item-actions { display: flex; gap: 8px; flex-shrink: 0; }
+        .btn-edit {
+            background: transparent; color: #111; border: 1px solid #111;
+            padding: 6px 14px; font-family: 'Playfair Display SC', serif;
+            font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase;
+            cursor: pointer;
+        }
+        .btn-edit:hover { background: #111; color: #fff; }
         .btn-delete {
             background: transparent; color: #7a1f1f; border: 1px solid #7a1f1f;
             padding: 6px 14px; font-family: 'Playfair Display SC', serif;
@@ -89,6 +97,13 @@
             cursor: pointer;
         }
         .btn-delete:hover { background: #7a1f1f; color: #fff; }
+        .btn-cancel {
+            background: transparent; color: #888; border: none;
+            padding: 12px 0 0 16px; font-family: 'Playfair Display SC', serif;
+            font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase;
+            cursor: pointer;
+        }
+        .btn-cancel:hover { color: #111; }
         .empty { font-style: italic; color: #888; font-size: 0.9rem; }
     </style>
 </head>
@@ -111,11 +126,12 @@
     <div class="section-label">Content Manager</div>
 
     <div class="form-section">
-        <h2>New Post</h2>
+        <h2 id="form-title">New Post</h2>
         <input type="text" id="title" placeholder="Post title">
         <textarea id="content" placeholder="Write your post here..."></textarea>
-        <button class="btn-publish" onclick="addPost()">Publish</button>
-        <div class="success-msg" id="msg">Published successfully!</div>
+        <button class="btn-publish" id="btn-submit" onclick="savePost()">Publish</button>
+        <button class="btn-cancel" id="btn-cancel" onclick="cancelEdit()" style="display:none">Cancel</button>
+        <div class="success-msg" id="msg"></div>
     </div>
 
     <div class="posts-section">
@@ -150,6 +166,9 @@ function login() {
     }
 }
 
+let editingId = null;
+const postsCache = {};
+
 async function loadPosts() {
     const { data } = await sb.from('posts').select('*').order('created_at', { ascending: false });
     const list = document.getElementById('posts-list');
@@ -159,6 +178,7 @@ async function loadPosts() {
         return;
     }
     data.forEach(post => {
+        postsCache[post.id] = post;
         const date = new Date(post.created_at).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
         list.innerHTML += `
             <div class="post-item">
@@ -166,20 +186,54 @@ async function loadPosts() {
                     <h3>${post.title}</h3>
                     <div class="date">${date}</div>
                 </div>
-                <button class="btn-delete" onclick="deletePost('${post.id}')">Delete</button>
+                <div class="post-item-actions">
+                    <button class="btn-edit" onclick="editPost('${post.id}')">Edit</button>
+                    <button class="btn-delete" onclick="deletePost('${post.id}')">Delete</button>
+                </div>
             </div>`;
     });
 }
 
-async function addPost() {
+function editPost(id) {
+    const post = postsCache[id];
+    if (!post) return;
+    editingId = id;
+    document.getElementById('title').value = post.title;
+    document.getElementById('content').value = post.content;
+    document.getElementById('form-title').textContent = 'Edit Post';
+    document.getElementById('btn-submit').textContent = 'Save';
+    document.getElementById('btn-cancel').style.display = 'inline-block';
+    document.getElementById('form-title').scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('title').focus();
+}
+
+function cancelEdit() {
+    editingId = null;
+    document.getElementById('title').value = '';
+    document.getElementById('content').value = '';
+    document.getElementById('form-title').textContent = 'New Post';
+    document.getElementById('btn-submit').textContent = 'Publish';
+    document.getElementById('btn-cancel').style.display = 'none';
+    document.getElementById('msg').style.display = 'none';
+}
+
+async function savePost() {
     const title = document.getElementById('title').value.trim();
     const content = document.getElementById('content').value.trim();
     if (!title || !content) return alert('Please fill in both fields!');
-    const { error } = await sb.from('posts').insert({ title, content });
-    if (error) { alert('Error: ' + error.message); return; }
-    document.getElementById('title').value = '';
-    document.getElementById('content').value = '';
+    const isEditing = !!editingId;
+    if (isEditing) {
+        const { error } = await sb.from('posts').update({ title, content }).eq('id', editingId);
+        if (error) { alert('Error: ' + error.message); return; }
+        cancelEdit();
+    } else {
+        const { error } = await sb.from('posts').insert({ title, content });
+        if (error) { alert('Error: ' + error.message); return; }
+        document.getElementById('title').value = '';
+        document.getElementById('content').value = '';
+    }
     const msg = document.getElementById('msg');
+    msg.textContent = isEditing ? 'Updated successfully!' : 'Published successfully!';
     msg.style.display = 'block';
     setTimeout(() => msg.style.display = 'none', 3000);
     loadPosts();
@@ -187,6 +241,7 @@ async function addPost() {
 
 async function deletePost(id) {
     if (!confirm('Delete this post?')) return;
+    if (editingId === id) cancelEdit();
     await sb.from('posts').delete().eq('id', id);
     loadPosts();
 }
