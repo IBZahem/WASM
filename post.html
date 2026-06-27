@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bin Zahim Blog</title>
+    <title>Bin Zahim</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Playfair+Display+SC:wght@400;700&display=swap" rel="stylesheet">
@@ -178,6 +178,11 @@
             padding: 14px 0 10px;
         }
 
+        .site-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+
         .tagline {
             font-style: italic;
             font-size: 0.88rem;
@@ -193,82 +198,61 @@
             margin-top: 0;
         }
 
-        /* ── Section label ── */
+        /* ── Post full view ── */
 
-        .section-label {
-            font-family: 'Playfair Display SC', serif;
-            font-size: 0.6rem;
-            letter-spacing: 0.25em;
-            text-transform: uppercase;
-            color: #444;
-            text-align: center;
-            padding: 12px 0 11px;
-            border-bottom: 1px solid #111;
-        }
-
-        /* ── Post ── */
-
-        .post {
-            padding: 30px 0 26px;
-            border-bottom: 1px solid #ccc;
-        }
-
-        .post-meta {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 12px;
-        }
-
-        .post-date {
-            font-family: 'Playfair Display SC', serif;
-            font-size: 0.68rem;
-            letter-spacing: 0.08em;
-            color: #666;
-        }
-
-        .post-title {
-            font-size: 2rem;
-            font-weight: 700;
-            line-height: 1.18;
-            margin-bottom: 12px;
-        }
-
-        .post-title a {
-            text-decoration: none;
-            color: #111;
-        }
-
-        .post-title a:hover {
-            text-decoration: underline;
-            text-decoration-thickness: 1px;
-            text-underline-offset: 3px;
-        }
-
-        .post-excerpt {
-            font-style: italic;
-            font-size: 0.93rem;
-            color: #444;
-            line-height: 1.75;
-            max-width: 560px;
-        }
-
-        .read-more {
+        .back-link {
             display: inline-block;
-            margin-top: 14px;
+            margin: 28px 0 0;
             font-family: 'Playfair Display SC', serif;
             font-size: 0.62rem;
             letter-spacing: 0.18em;
             text-transform: uppercase;
-            color: #111;
+            color: #444;
             text-decoration: none;
-            border-bottom: 1px solid #111;
+            border-bottom: 1px solid #ccc;
             padding-bottom: 2px;
         }
 
-        .read-more:hover {
-            color: #555;
-            border-bottom-color: #555;
+        .back-link:hover {
+            color: #111;
+            border-bottom-color: #111;
+        }
+
+        .post-full {
+            padding: 24px 0 0;
+            border-top: 2px solid #111;
+            margin-top: 16px;
+        }
+
+        .post-full-date {
+            font-family: 'Playfair Display SC', serif;
+            font-size: 0.68rem;
+            letter-spacing: 0.08em;
+            color: #666;
+            margin-bottom: 16px;
+        }
+
+        .post-full-title {
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            font-weight: 700;
+            line-height: 1.18;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .post-body {
+            font-size: 1.05rem;
+            line-height: 1.85;
+            color: #222;
+        }
+
+        .post-body p {
+            margin-bottom: 1.3em;
+        }
+
+        .post-body p:last-child {
+            margin-bottom: 0;
         }
 
         .loading-state, .empty-state {
@@ -350,15 +334,14 @@
                 <span>June 27, 2026</span>
             </div>
             <hr class="masthead-rule">
-            <h1 class="site-title">Bin Zahim</h1>
+            <h1 class="site-title"><a href="index.html">Bin Zahim</a></h1>
             <p class="tagline">Notes on things I read and find interesting.</p>
             <div class="masthead-bottom"></div>
         </header>
 
-        <p class="section-label">Latest</p>
-
         <main>
-            <div id="posts-container"><p class="loading-state">Loading&hellip;</p></div>
+            <a class="back-link" href="index.html">&larr; All Posts</a>
+            <div id="post-container"><p class="loading-state">Loading&hellip;</p></div>
         </main>
 
         <footer class="footer">
@@ -379,26 +362,39 @@
                 .replace(/"/g, '&quot;');
         }
 
-        async function loadPosts() {
-            const container = document.getElementById('posts-container');
-            const { data, error } = await sb.from('posts').select('*').order('created_at', { ascending: false });
-            if (error || !data || data.length === 0) {
-                container.innerHTML = '<p class="empty-state">No posts yet.</p>';
+        function renderBody(content) {
+            return content
+                .split(/\n{2,}/)
+                .map(function (p) { return '<p>' + escapeHtml(p).replace(/\n/g, '<br>') + '</p>'; })
+                .join('');
+        }
+
+        async function loadPost() {
+            const id = new URLSearchParams(window.location.search).get('id');
+            const container = document.getElementById('post-container');
+
+            if (!id) {
+                window.location.href = 'index.html';
                 return;
             }
-            container.innerHTML = data.map(function (post) {
-                const date = new Date(post.created_at).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
-                const excerpt = post.content.length > 220 ? post.content.slice(0, 220).trimEnd() + '…' : post.content;
-                return `
-                    <article class="post">
-                        <div class="post-meta">
-                            <span class="post-date">${date}</span>
-                        </div>
-                        <h2 class="post-title"><a href="post.html?id=${encodeURIComponent(post.id)}">${escapeHtml(post.title)}</a></h2>
-                        <p class="post-excerpt">${escapeHtml(excerpt)}</p>
-                        <a class="read-more" href="post.html?id=${encodeURIComponent(post.id)}">Continue Reading</a>
-                    </article>`;
-            }).join('');
+
+            const { data, error } = await sb.from('posts').select('*').eq('id', id).single();
+
+            if (error || !data) {
+                container.innerHTML = '<p class="empty-state">Post not found.</p>';
+                return;
+            }
+
+            document.title = data.title + ' — Bin Zahim';
+
+            const date = new Date(data.created_at).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+
+            container.innerHTML = `
+                <article class="post-full">
+                    <p class="post-full-date">${date}</p>
+                    <h2 class="post-full-title">${escapeHtml(data.title)}</h2>
+                    <div class="post-body">${renderBody(data.content)}</div>
+                </article>`;
         }
 
         (function () {
@@ -411,7 +407,7 @@
             function unlock() {
                 document.body.classList.remove('locked');
                 sessionStorage.setItem(storageKey, 'true');
-                loadPosts();
+                loadPost();
             }
 
             if (sessionStorage.getItem(storageKey) === 'true') {
