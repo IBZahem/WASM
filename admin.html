@@ -131,11 +131,20 @@ const ADMIN_PASSWORD = '99';
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+function showApp() {
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    sessionStorage.setItem('ibzahemUnlocked', 'true');
+    loadPosts();
+}
+
+if (sessionStorage.getItem('ibzahemUnlocked') === 'true') {
+    showApp();
+}
+
 function login() {
     if (document.getElementById('pw').value === ADMIN_PASSWORD) {
-        document.getElementById('login').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
-        loadPosts();
+        showApp();
     } else {
         document.getElementById('err').style.display = 'block';
     }
