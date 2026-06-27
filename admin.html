@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Bin Zahim</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Playfair+Display+SC:wght@400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #fff; color: #111; }
+
+        #login {
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; min-height: 100vh; padding: 20px;
+        }
+        #login h1 {
+            font-family: 'Playfair Display', serif; font-size: clamp(3rem, 10vw, 5rem);
+            font-weight: 900; margin-bottom: 8px;
+        }
+        #login p {
+            font-family: 'Playfair Display SC', serif; font-size: 0.62rem;
+            letter-spacing: 0.2em; text-transform: uppercase; color: #444;
+            border-top: 1px solid #111; border-bottom: 1px solid #111;
+            padding: 8px 0; width: 100%; max-width: 400px; text-align: center;
+            margin-bottom: 24px;
+        }
+        #login input {
+            width: 100%; max-width: 400px; border: 1px solid #111;
+            padding: 12px; font-size: 1rem; text-align: center;
+            letter-spacing: 4px; background: #fff; margin-bottom: 8px;
+        }
+        #login button {
+            background: #111; color: #fff; border: none; padding: 12px 40px;
+            font-family: 'Playfair Display SC', serif; font-size: 0.62rem;
+            letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer;
+        }
+        #login .err { color: #7a1f1f; font-style: italic; font-size: 0.9rem; margin-top: 8px; display: none; }
+
+        #app { display: none; max-width: 780px; margin: 0 auto; padding: 0 28px 60px; }
+
+        .masthead {
+            border-top: 6px solid #111; padding-top: 10px; margin-top: 36px; text-align: center;
+        }
+        .masthead h1 {
+            font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-weight: 900; padding: 14px 0 10px;
+        }
+        .masthead-bottom { border-top: 1px solid #111; border-bottom: 4px double #111; height: 6px; }
+        .section-label {
+            font-family: 'Playfair Display SC', serif; font-size: 0.6rem;
+            letter-spacing: 0.25em; text-transform: uppercase; color: #444;
+            text-align: center; padding: 12px 0; border-bottom: 1px solid #111;
+            margin-bottom: 28px;
+        }
+
+        .form-section { border-top: 2px solid #111; padding-top: 20px; margin-bottom: 40px; }
+        .form-section h2 {
+            font-family: 'Playfair Display', serif; font-size: 1.4rem;
+            margin-bottom: 16px;
+        }
+        input[type="text"], textarea {
+            width: 100%; border: 1px solid #ccc; padding: 12px;
+            font-family: 'Inter', sans-serif; font-size: 0.95rem;
+            margin-bottom: 12px; background: #fff;
+        }
+        input[type="text"]:focus, textarea:focus { outline: 2px solid #111; border-color: #111; }
+        textarea { height: 220px; resize: vertical; }
+        .btn-publish {
+            background: #111; color: #fff; border: none; padding: 12px 32px;
+            font-family: 'Playfair Display SC', serif; font-size: 0.62rem;
+            letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer;
+        }
+        .btn-publish:hover { background: #444; }
+        .success-msg { color: green; font-style: italic; font-size: 0.9rem; margin-top: 8px; display: none; }
+
+        .posts-section { border-top: 2px solid #111; padding-top: 20px; }
+        .posts-section h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 16px; }
+        .post-item {
+            border-bottom: 1px solid #eee; padding: 16px 0;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .post-item h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; }
+        .post-item .date { font-size: 11px; color: #888; margin-top: 4px; font-family: 'Playfair Display SC', serif; letter-spacing: 0.08em; }
+        .btn-delete {
+            background: transparent; color: #7a1f1f; border: 1px solid #7a1f1f;
+            padding: 6px 14px; font-family: 'Playfair Display SC', serif;
+            font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase;
+            cursor: pointer;
+        }
+        .btn-delete:hover { background: #7a1f1f; color: #fff; }
+        .empty { font-style: italic; color: #888; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+<div id="login">
+    <h1>Bin Zahim</h1>
+    <p>Admin Access</p>
+    <input type="password" id="pw" placeholder="••••••" onkeydown="if(event.key==='Enter') login()">
+    <button onclick="login()">Enter</button>
+    <div class="err" id="err">Incorrect password</div>
+</div>
+
+<div id="app">
+    <div class="masthead">
+        <h1>Bin Zahim</h1>
+        <div class="masthead-bottom"></div>
+    </div>
+
+    <div class="section-label">Content Manager</div>
+
+    <div class="form-section">
+        <h2>New Post</h2>
+        <input type="text" id="title" placeholder="Post title">
+        <textarea id="content" placeholder="Write your post here..."></textarea>
+        <button class="btn-publish" onclick="addPost()">Publish</button>
+        <div class="success-msg" id="msg">Published successfully!</div>
+    </div>
+
+    <div class="posts-section">
+        <h2>All Posts</h2>
+        <div id="posts-list"></div>
+    </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://btkzjfxxxqukjdnbibsa.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0a3pqZnh4eHF1a2pkbmJpYnNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1NDk3NzMsImV4cCI6MjA5ODEyNTc3M30.FvJ5lXhYoBw1Ceinu3fLroFAEB5_iL_5Z2wn24gVXuE';
+const ADMIN_PASSWORD = 'sirdab2026';
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+function login() {
+    if (document.getElementById('pw').value === ADMIN_PASSWORD) {
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+        loadPosts();
+    } else {
+        document.getElementById('err').style.display = 'block';
+    }
+}
+
+async function loadPosts() {
+    const { data } = await sb.from('posts').select('*').order('created_at', { ascending: false });
+    const list = document.getElementById('posts-list');
+    list.innerHTML = '';
+    if (!data || data.length === 0) {
+        list.innerHTML = '<p class="empty">No posts yet.</p>';
+        return;
+    }
+    data.forEach(post => {
+        const date = new Date(post.created_at).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+        list.innerHTML += `
+            <div class="post-item">
+                <div>
+                    <h3>${post.title}</h3>
+                    <div class="date">${date}</div>
+                </div>
+                <button class="btn-delete" onclick="deletePost('${post.id}')">Delete</button>
+            </div>`;
+    });
+}
+
+async function addPost() {
+    const title = document.getElementById('title').value.trim();
+    const content = document.getElementById('content').value.trim();
+    if (!title || !content) return alert('Please fill in both fields!');
+    const { error } = await sb.from('posts').insert({ title, content });
+    if (error) { alert('Error: ' + error.message); return; }
+    document.getElementById('title').value = '';
+    document.getElementById('content').value = '';
+    const msg = document.getElementById('msg');
+    msg.style.display = 'block';
+    setTimeout(() => msg.style.display = 'none', 3000);
+    loadPosts();
+}
+
+async function deletePost(id) {
+    if (!confirm('Delete this post?')) return;
+    await sb.from('posts').delete().eq('id', id);
+    loadPosts();
+}
+</script>
+</body>
+</html>
