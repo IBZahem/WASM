@@ -3,585 +3,1429 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bin Zahim</title>
+    <title>Bin Zahim — Private Archive</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Playfair+Display+SC:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        /* ── Design tokens ── */
         :root {
-            --bg:        #111;
-            --surface:   #1c1c1c;
-            --gold:      #c9a84c;
-            --text:      #f0ebe2;
-            --muted:     #909090;
-            --dim:       #606060;
-            --border:    #333;
-            --border-sub:#242424;
-            --error:     #e07070;
+            --bg:           #1a1814;
+            --bg-card:      #211e1a;
+            --bg-hover:     #272320;
+            --bg-sidebar:   #141210;
+            --bg-input:     #1e1b17;
+            --border:       #2c2820;
+            --border-mid:   #3d3730;
+            --gold:         #c4933f;
+            --gold-soft:    rgba(196,147,63,0.12);
+            --gold-dim:     rgba(196,147,63,0.06);
+            --text:         #e4dbd0;
+            --text-mid:     #a89e92;
+            --text-dim:     #6b6259;
+            --mono:         'SFMono-Regular','Consolas','Liberation Mono','Menlo',monospace;
+            --red:          #c4635a;
+            --green:        #7aab7a;
+            --sidebar-w:    210px;
+            --radius:       2px;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { height: 100%; }
 
         body {
             background: var(--bg);
             color: var(--text);
             font-family: 'Playfair Display', Georgia, serif;
-            max-width: 780px;
-            margin: 0 auto;
-            padding: 0 32px 80px;
+            min-height: 100%;
+            line-height: 1.6;
         }
 
-        body.locked { min-height: 100vh; }
-        body.locked .site-shell { display: none; }
-        body:not(.locked) .password-page { display: none; }
+        /* ────────────────────────────────────────
+           LOCK SCREEN
+        ──────────────────────────────────────── */
 
-        /* ── Password screen ── */
-
-        .password-page {
-            min-height: 100vh;
+        .lock-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
             display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 999;
         }
 
-        .password-card {
+        .lock-screen.hidden { display: none; }
+
+        .lock-card {
             width: 100%;
-            max-width: 480px;
-            border-top: 5px solid var(--gold);
-            border-bottom: 1px solid var(--border);
-            padding: 28px 0 36px;
+            max-width: 420px;
+            padding: 0 32px;
             text-align: center;
         }
 
-        .password-kicker {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 10px;
-            margin-bottom: 28px;
-            font-family: 'Playfair Display SC', serif;
+        .lock-eyebrow {
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-bottom: 24px;
+        }
+
+        .lock-title {
+            font-size: clamp(2.8rem, 10vw, 4.8rem);
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            line-height: 1;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .lock-sub {
+            font-family: var(--mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 40px;
+        }
+
+        .lock-divider {
+            width: 40px;
+            height: 2px;
+            background: var(--gold);
+            margin: 0 auto 36px;
+        }
+
+        .lock-label {
+            font-family: var(--mono);
             font-size: 0.64rem;
             letter-spacing: 0.16em;
             text-transform: uppercase;
-            color: var(--dim);
-        }
-
-        .password-title {
-            font-size: clamp(3rem, 11vw, 6rem);
-            font-weight: 900;
-            letter-spacing: 0.04em;
-            line-height: 1;
-            padding: 0 0 20px;
-        }
-
-        .password-subtitle {
-            font-family: 'Playfair Display SC', serif;
-            font-size: 0.64rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--muted);
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-            padding: 10px 0;
-            margin-bottom: 28px;
-        }
-
-        .password-form { text-align: left; }
-
-        .password-label {
+            color: var(--text-dim);
             display: block;
             margin-bottom: 10px;
-            font-family: 'Playfair Display SC', serif;
-            font-size: 0.66rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--muted);
+            text-align: left;
         }
 
-        .password-row { display: flex; border: 1px solid var(--border); }
+        .lock-row {
+            display: flex;
+            border: 1px solid var(--border-mid);
+        }
 
-        .password-input {
-            min-width: 0; flex: 1; border: 0;
-            border-right: 1px solid var(--border);
-            padding: 13px 14px;
+        .lock-input {
+            flex: 1;
+            min-width: 0;
+            background: var(--bg-input);
+            border: none;
+            border-right: 1px solid var(--border-mid);
+            padding: 13px 16px;
             font: 1rem Georgia, serif;
-            color: var(--text); background: var(--surface);
-        }
-
-        .password-input::placeholder { color: var(--dim); }
-        .password-input:focus { outline: 2px solid var(--gold); outline-offset: -1px; }
-
-        .password-submit {
-            border: 0; background: var(--gold); color: #111; padding: 0 20px;
-            font-family: 'Playfair Display SC', serif; font-size: 0.64rem;
-            letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; font-weight: 700;
-        }
-
-        .password-submit:hover { background: #b8943e; }
-
-        .password-error {
-            min-height: 1.4em; margin-top: 12px;
-            font-style: italic; font-size: 0.9rem; color: var(--error);
-        }
-
-        /* ── Admin button ── */
-
-        .admin-btn {
-            display: inline-block; margin: 14px 0 0;
-            background: transparent; color: var(--muted);
-            font-family: 'Playfair Display SC', serif; font-size: 0.64rem;
-            letter-spacing: 0.18em; text-transform: uppercase;
-            text-decoration: none; border: 1px solid var(--border); padding: 9px 24px;
-        }
-
-        .admin-btn:hover { color: var(--text); border-color: var(--text); }
-
-        /* ── Masthead ── */
-
-        .masthead {
-            border-top: 5px solid var(--gold);
-            padding-top: 12px; margin-top: 48px; text-align: center;
-        }
-
-        .masthead-meta {
-            display: flex; justify-content: space-between;
-            font-family: 'Playfair Display SC', serif; font-size: 0.66rem;
-            letter-spacing: 0.16em; text-transform: uppercase;
-            color: var(--muted); padding-bottom: 10px;
-        }
-
-        .masthead-rule { border: none; border-top: 1px solid var(--border); margin: 0; }
-
-        .site-title {
-            font-size: clamp(3.5rem, 12vw, 6.5rem);
-            font-weight: 900; letter-spacing: 0.04em; line-height: 1; padding: 16px 0 12px;
-        }
-
-        .tagline {
-            font-style: italic; font-size: 0.9rem;
-            color: var(--muted); letter-spacing: 0.03em; padding: 0 0 14px;
-        }
-
-        .masthead-bottom {
-            border-top: 1px solid var(--border);
-            border-bottom: 3px double var(--gold); height: 7px;
-        }
-
-        /* ── Navigation ── */
-
-        .back-link {
-            display: none;
-            margin: 28px 0 0;
-            font-family: 'Playfair Display SC', serif; font-size: 0.64rem;
-            letter-spacing: 0.2em; text-transform: uppercase;
-            color: var(--gold); text-decoration: none;
-            border-bottom: 1px solid var(--gold); padding-bottom: 2px;
-        }
-
-        .back-link:hover { color: var(--text); border-bottom-color: var(--text); }
-
-        /* ── Search ── */
-
-        .search-wrap {
-            display: none;
-            position: relative;
-            padding: 28px 0 0;
-        }
-
-        .search-input {
-            width: 100%; background: transparent; border: none;
-            border-bottom: 1px solid var(--border);
-            color: var(--text); padding: 10px 32px 10px 0;
-            font: italic 1rem 'Playfair Display', Georgia, serif;
-            letter-spacing: 0.02em;
-            -webkit-appearance: none; appearance: none;
-        }
-
-        .search-input::placeholder { color: var(--dim); font-style: italic; }
-        .search-input:focus { outline: none; border-bottom-color: var(--gold); }
-
-        .search-clear {
-            position: absolute; right: 0; bottom: 8px;
-            background: none; border: none; color: var(--dim);
-            font-size: 0.75rem; cursor: pointer; padding: 2px 4px; display: none;
-        }
-
-        .search-clear:hover { color: var(--muted); }
-        .search-clear.visible { display: block; }
-
-        /* ── Section label ── */
-
-        .section-label {
-            font-family: 'Playfair Display SC', serif; font-size: 0.72rem;
-            letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold);
-            text-align: center; padding: 16px 0 15px; margin-top: 12px;
-            border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-        }
-
-        /* ── Category hub grid ── */
-
-        .cat-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1px;
-            background: var(--border);
-            border: 1px solid var(--border);
-            margin-top: 2px;
-        }
-
-        .cat-card {
-            background: var(--bg);
-            padding: 32px 28px;
-            text-decoration: none;
             color: var(--text);
-            display: block;
-            border-left: 3px solid transparent;
-            transition: background 0.15s, border-color 0.15s;
+            letter-spacing: 3px;
         }
 
-        .cat-card:hover {
-            background: var(--surface);
+        .lock-input::placeholder { color: var(--text-dim); letter-spacing: 0; }
+        .lock-input:focus { outline: 2px solid var(--gold); outline-offset: -2px; }
+
+        .lock-btn {
+            border: none;
+            background: var(--gold);
+            color: #111;
+            padding: 0 22px;
+            font-family: var(--mono);
+            font-size: 0.64rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .lock-btn:hover { background: #b8943e; }
+
+        .lock-error {
+            min-height: 1.4em;
+            margin-top: 12px;
+            font-style: italic;
+            font-size: 0.88rem;
+            color: var(--red);
+            text-align: left;
+        }
+
+        /* ────────────────────────────────────────
+           APP LAYOUT
+        ──────────────────────────────────────── */
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ────────────────────────────────────────
+           SIDEBAR
+        ──────────────────────────────────────── */
+
+        .sidebar {
+            width: var(--sidebar-w);
+            min-height: 100vh;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 200;
+            transition: transform 0.22s ease;
+        }
+
+        .sidebar-brand {
+            padding: 28px 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-monogram {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            background: var(--gold);
+            color: #111;
+            font-family: 'Playfair Display', serif;
+            font-size: 0.85rem;
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            text-align: center;
+            line-height: 32px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-name {
+            display: block;
+            font-family: 'Playfair Display', serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            color: var(--text);
+        }
+
+        .sidebar-tagline {
+            display: block;
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-top: 3px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px 0;
+            overflow-y: auto;
+        }
+
+        .nav-section-label {
+            font-family: var(--mono);
+            font-size: 0.58rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            padding: 14px 20px 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 20px;
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.06em;
+            color: var(--text-mid);
+            text-decoration: none;
+            border-left: 2px solid transparent;
+            transition: color 0.12s, background 0.12s, border-color 0.12s;
+            cursor: pointer;
+            background: none;
+            border-top: none;
+            border-right: none;
+            border-bottom: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--text);
+            background: var(--gold-dim);
             border-left-color: var(--gold);
         }
 
-        .cat-card--unc { opacity: 0.75; }
-        .cat-card--unc:hover { opacity: 1; }
+        .nav-link .nav-icon {
+            width: 14px;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
 
-        .cat-name {
+        .nav-link:hover .nav-icon,
+        .nav-link.active .nav-icon { color: var(--gold); }
+
+        .nav-divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 10px 20px;
+        }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .sidebar-footer-text {
+            font-family: var(--mono);
+            font-size: 0.58rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+        }
+
+        /* sidebar overlay for mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 190;
+        }
+
+        .sidebar-overlay.visible { display: block; }
+
+        /* ────────────────────────────────────────
+           MAIN CONTENT
+        ──────────────────────────────────────── */
+
+        .main {
+            flex: 1;
+            margin-left: var(--sidebar-w);
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Top bar ── */
+
+        .top-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            padding: 0 36px;
+            height: 58px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 4px 6px;
+            line-height: 1;
+            display: none;
+        }
+
+        .sidebar-toggle:hover { color: var(--text); }
+
+        .top-bar-identity {
+            flex: 1;
+        }
+
+        .top-bar-title {
             font-family: 'Playfair Display', serif;
-            font-size: clamp(1.2rem, 3vw, 1.5rem);
-            font-weight: 700; line-height: 1.2; margin-bottom: 12px;
+            font-size: 1rem;
+            font-weight: 900;
+            letter-spacing: 0.1em;
             color: var(--text);
         }
 
-        .cat-meta {
-            font-family: 'Playfair Display SC', serif;
-            font-size: 0.64rem; letter-spacing: 0.1em; color: var(--muted);
-            display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+        .top-bar-sub {
+            font-family: var(--mono);
+            font-size: 0.58rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            display: block;
+            margin-top: 1px;
         }
 
-        .cat-count { color: var(--gold); }
-        .cat-sep { color: var(--dim); }
+        .top-bar-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
 
-        /* ── Post list (category view) ── */
+        .btn-new {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--gold);
+            color: #111;
+            border: none;
+            padding: 7px 18px;
+            font-family: var(--mono);
+            font-size: 0.64rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 700;
+            white-space: nowrap;
+        }
 
-        .post {
-            padding: 44px 0 40px;
+        .btn-new:hover { background: #b8943e; }
+
+        /* ── Content area ── */
+
+        .content-wrap {
+            flex: 1;
+            max-width: 920px;
+            width: 100%;
+            padding: 40px 36px 80px;
+        }
+
+        /* ── Section skeleton ── */
+
+        .section { margin-bottom: 52px; }
+
+        .section-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
             border-bottom: 1px solid var(--border);
         }
 
-        .post-date {
-            font-family: 'Playfair Display SC', serif; font-size: 0.68rem;
-            letter-spacing: 0.1em; color: var(--gold); margin-bottom: 14px;
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: 0.02em;
         }
 
-        .post-title {
-            font-size: clamp(1.8rem, 4.5vw, 2.4rem);
-            font-weight: 700; line-height: 1.15; margin-bottom: 16px;
+        .section-badge {
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.1em;
+            color: var(--text-dim);
+            text-transform: uppercase;
         }
 
-        .post-title a { text-decoration: none; color: var(--text); }
-        .post-title a:hover { color: var(--gold); }
-
-        .post-excerpt {
-            font-style: italic; font-size: 1rem;
-            color: var(--muted); line-height: 1.85;
+        .section-link {
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.1em;
+            color: var(--gold);
+            text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+            background: none;
+            border: none;
         }
 
-        .read-more {
-            display: inline-block; margin-top: 22px;
-            font-family: 'Playfair Display SC', serif; font-size: 0.64rem;
-            letter-spacing: 0.22em; text-transform: uppercase;
-            color: var(--gold); text-decoration: none;
-            border-bottom: 1px solid var(--gold); padding-bottom: 2px;
+        .section-link:hover { color: var(--text); }
+
+        /* ── Search bar ── */
+
+        .search-section { margin-bottom: 32px; }
+
+        .search-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: var(--bg-input);
+            border: 1px solid var(--border-mid);
         }
 
-        .read-more::after { content: " →"; }
-        [dir="rtl"] .read-more::after { content: " ←"; }
-        .read-more:hover { color: var(--text); border-bottom-color: var(--text); }
+        .search-icon {
+            padding: 0 14px;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            pointer-events: none;
+            flex-shrink: 0;
+        }
 
-        /* ── Match highlight ── */
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 13px 0;
+            font: italic 1rem 'Playfair Display', Georgia, serif;
+            color: var(--text);
+            letter-spacing: 0.02em;
+        }
+
+        .search-input::placeholder { color: var(--text-dim); }
+        .search-input:focus { outline: none; }
+        .search-wrap:focus-within { border-color: var(--gold); }
+
+        .search-clear {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            cursor: pointer;
+            padding: 0 14px;
+            display: none;
+        }
+
+        .search-clear:hover { color: var(--text-mid); }
+        .search-clear.visible { display: block; }
+
+        /* ── Quick actions ── */
+
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 52px;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid var(--border-mid);
+            color: var(--text-mid);
+            font-family: var(--mono);
+            font-size: 0.68rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+
+        .action-btn:hover {
+            background: var(--bg-card);
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .action-btn .action-sym {
+            font-style: normal;
+            opacity: 0.7;
+        }
+
+        /* ── Category cards ── */
+
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 10px;
+        }
+
+        .cat-card {
+            display: block;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 22px 20px;
+            text-decoration: none;
+            color: var(--text);
+            position: relative;
+            overflow: hidden;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .cat-card::after {
+            content: '';
+            position: absolute;
+            inset: 0 auto 0 0;
+            width: 2px;
+            background: var(--gold);
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        .cat-card:hover {
+            background: var(--bg-hover);
+            border-color: var(--border-mid);
+        }
+
+        .cat-card:hover::after { opacity: 1; }
+
+        .cat-card--unc { border-style: dashed; }
+
+        .cat-card-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+
+        .cat-card-desc {
+            font-style: italic;
+            font-size: 0.82rem;
+            color: var(--text-mid);
+            margin-bottom: 14px;
+            line-height: 1.5;
+        }
+
+        .cat-card-meta {
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.06em;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .cat-card-count {
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        /* ── Recent entries ── */
+
+        .entries-list { display: flex; flex-direction: column; gap: 8px; }
+
+        .entry-card {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 18px 20px;
+            text-decoration: none;
+            color: var(--text);
+            transition: background 0.15s, border-color 0.15s;
+            gap: 8px;
+        }
+
+        .entry-card:hover {
+            background: var(--bg-hover);
+            border-color: var(--border-mid);
+        }
+
+        .entry-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .entry-card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.3;
+        }
+
+        .entry-card-open {
+            font-family: var(--mono);
+            font-size: 0.58rem;
+            letter-spacing: 0.1em;
+            color: var(--gold);
+            white-space: nowrap;
+            flex-shrink: 0;
+            padding-top: 2px;
+        }
+
+        .entry-card-meta {
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.06em;
+            color: var(--text-dim);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .entry-card-cat { color: var(--gold); }
+
+        .entry-card-excerpt {
+            font-style: italic;
+            font-size: 0.88rem;
+            color: var(--text-mid);
+            line-height: 1.7;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* ── Draft cards ── */
+
+        .draft-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px;
+            background: var(--bg-card);
+            border: 1px dashed var(--border-mid);
+            gap: 12px;
+        }
+
+        .draft-card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.95rem;
+            color: var(--text-mid);
+        }
+
+        .draft-card-date {
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            flex-shrink: 0;
+        }
+
+        /* ── Category post view ── */
+
+        .view-header {
+            margin-bottom: 32px;
+        }
+
+        .back-link {
+            font-family: var(--mono);
+            font-size: 0.64rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--gold);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        .back-link:hover { color: var(--text); }
+
+        .view-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.6rem, 4vw, 2.4rem);
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .view-meta {
+            font-family: var(--mono);
+            font-size: 0.64rem;
+            letter-spacing: 0.08em;
+            color: var(--text-dim);
+        }
+
+        /* ── Post list ── */
+
+        .post-list { margin-top: 24px; }
+
+        .post-item {
+            border-bottom: 1px solid var(--border);
+            padding: 28px 0;
+        }
+
+        .post-item-date {
+            font-family: var(--mono);
+            font-size: 0.64rem;
+            letter-spacing: 0.08em;
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+
+        .post-item-title {
+            font-size: clamp(1.3rem, 3.5vw, 1.9rem);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .post-item-title a { text-decoration: none; color: var(--text); }
+        .post-item-title a:hover { color: var(--gold); }
+
+        .post-item-excerpt {
+            font-style: italic;
+            font-size: 0.95rem;
+            color: var(--text-mid);
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .post-item-read {
+            font-family: var(--mono);
+            font-size: 0.62rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--gold);
+            text-decoration: none;
+            border-bottom: 1px solid rgba(196,147,63,0.4);
+            padding-bottom: 1px;
+        }
+
+        .post-item-read:hover { color: var(--text); border-bottom-color: var(--text); }
+        .post-item-read::after { content: ' →'; }
+        [dir="rtl"] .post-item-read::after { content: ' ←'; }
+
+        /* ── Search results ── */
+
+        .search-results-header {
+            font-family: var(--mono);
+            font-size: 0.68rem;
+            letter-spacing: 0.1em;
+            color: var(--text-dim);
+            padding: 16px 0 24px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 0;
+        }
+
+        .search-results-header strong { color: var(--gold); }
 
         mark {
-            background: rgba(201, 168, 76, 0.28);
-            color: inherit; border-radius: 1px; padding: 0 1px;
+            background: rgba(196,147,63,0.22);
+            color: inherit;
+            border-radius: 1px;
         }
 
-        .loading-state, .empty-state {
-            font-style: italic; color: var(--dim);
-            font-size: 0.95rem; padding: 40px 0;
+        /* ── Empty states ── */
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 20px;
+            color: var(--text-dim);
+        }
+
+        .empty-state-icon {
+            font-size: 2rem;
+            margin-bottom: 16px;
+            opacity: 0.4;
+        }
+
+        .empty-state-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-mid);
+            margin-bottom: 8px;
+        }
+
+        .empty-state-body {
+            font-style: italic;
+            font-size: 0.88rem;
+            color: var(--text-dim);
+            max-width: 320px;
+            margin: 0 auto 20px;
+            line-height: 1.7;
+        }
+
+        .empty-state-action {
+            display: inline-block;
+            font-family: var(--mono);
+            font-size: 0.62rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--gold);
+            text-decoration: none;
+            border: 1px solid rgba(196,147,63,0.3);
+            padding: 9px 20px;
+        }
+
+        .empty-state-action:hover { background: var(--gold-soft); }
+
+        /* ── Loading ── */
+
+        .loading {
+            font-family: var(--mono);
+            font-size: 0.64rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            padding: 32px 0;
         }
 
         /* ── Footer ── */
 
-        .footer {
-            margin-top: 64px; border-top: 1px solid var(--border);
-            padding-top: 20px; text-align: center;
+        .page-footer {
+            border-top: 1px solid var(--border);
+            padding: 20px 36px;
+            font-family: var(--mono);
+            font-size: 0.58rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            text-align: center;
         }
 
-        .footer-text {
-            font-family: 'Playfair Display SC', serif; font-size: 0.64rem;
-            letter-spacing: 0.18em; text-transform: uppercase; color: var(--dim);
-        }
+        /* ────────────────────────────────────────
+           RESPONSIVE
+        ──────────────────────────────────────── */
 
-        @media (max-width: 520px) {
-            body { padding: 0 20px 56px; }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(calc(-1 * var(--sidebar-w)));
+            }
+            .sidebar.open {
+                transform: translateX(0);
+                box-shadow: 4px 0 24px rgba(0,0,0,0.5);
+            }
+            .main { margin-left: 0; }
+            .sidebar-toggle { display: block; }
+            .top-bar { padding: 0 20px; }
+            .content-wrap { padding: 28px 20px 60px; }
             .cat-grid { grid-template-columns: 1fr; }
-            .password-row { display: block; border: 0; }
-            .password-input { width: 100%; border: 1px solid var(--border); }
-            .password-submit { width: 100%; min-height: 46px; margin-top: 10px; border: 0; }
+            .page-footer { padding: 20px; }
+        }
+
+        @media (min-width: 769px) {
+            .sidebar-toggle { display: none; }
         }
     </style>
 </head>
-<body class="locked">
+<body>
 
-    <section class="password-page" aria-labelledby="password-title">
-        <div class="password-card">
-            <div class="password-kicker">
-                <span>Private Edition</span>
-                <span>Authorized Readers</span>
+<!-- ── Lock screen ── -->
+<div class="lock-screen" id="lock-screen">
+    <div class="lock-card">
+        <p class="lock-eyebrow">Private Archive · Est. 2026</p>
+        <h1 class="lock-title">BIN ZAHIM</h1>
+        <p class="lock-sub">Personal knowledge vault</p>
+        <div class="lock-divider"></div>
+        <form id="lock-form">
+            <label class="lock-label" for="lock-input">Passphrase</label>
+            <div class="lock-row">
+                <input class="lock-input" id="lock-input" type="password"
+                       autocomplete="current-password" placeholder="••••••••" required>
+                <button class="lock-btn" type="submit">Enter</button>
             </div>
-            <h1 class="password-title" id="password-title">Bin Zahim</h1>
-            <p class="password-subtitle">Enter password to read today's issue</p>
-            <form class="password-form" id="password-form">
-                <label class="password-label" for="password-input">Password</label>
-                <div class="password-row">
-                    <input class="password-input" id="password-input" type="password" autocomplete="current-password" required>
-                    <button class="password-submit" type="submit">Unlock</button>
-                </div>
-                <p class="password-error" id="password-error" aria-live="polite"></p>
-            </form>
+            <p class="lock-error" id="lock-error" aria-live="polite"></p>
+        </form>
+    </div>
+</div>
+
+<!-- ── App ── -->
+<div class="app" id="app" style="display:none">
+
+    <!-- Sidebar overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <span class="sidebar-monogram">BZ</span>
+            <span class="sidebar-name">Bin Zahim</span>
+            <span class="sidebar-tagline">Private Archive</span>
         </div>
-    </section>
 
-    <div class="site-shell">
-        <header class="masthead">
-            <div class="masthead-meta">
-                <span>Est. 2026</span>
-                <span>Independent</span>
-                <span>June 27, 2026</span>
+        <nav class="sidebar-nav">
+            <span class="nav-section-label">Navigate</span>
+
+            <button class="nav-link active" id="nav-archive" onclick="goHome()">
+                <span class="nav-icon">◈</span> Archive
+            </button>
+            <button class="nav-link" onclick="scrollTo('sec-categories')">
+                <span class="nav-icon">▦</span> Categories
+            </button>
+            <button class="nav-link" onclick="scrollTo('sec-recent')">
+                <span class="nav-icon">◷</span> Recent
+            </button>
+            <button class="nav-link" id="nav-random" onclick="goRandom()">
+                <span class="nav-icon">↻</span> Random
+            </button>
+
+            <hr class="nav-divider">
+
+            <span class="nav-section-label">Tools</span>
+            <a class="nav-link" href="admin.html">
+                <span class="nav-icon">⚙</span> Manage
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <span class="sidebar-footer-text">Est. 2026</span>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+
+        <!-- Top bar -->
+        <header class="top-bar">
+            <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">☰</button>
+            <div class="top-bar-identity">
+                <span class="top-bar-title">BIN ZAHIM</span>
+                <span class="top-bar-sub">Private Archive · Est. 2026</span>
             </div>
-            <hr class="masthead-rule">
-            <h1 class="site-title">Bin Zahim</h1>
-            <p class="tagline">Notes on things I read and find interesting.</p>
-            <a href="admin.html" class="admin-btn">Manage</a>
-            <div class="masthead-bottom"></div>
+            <div class="top-bar-actions">
+                <a class="btn-new" href="admin.html">＋ New Post</a>
+            </div>
         </header>
 
-        <a class="back-link" id="back-link" href="index.html">&#8592; All Categories</a>
+        <!-- Content -->
+        <div class="content-wrap">
 
-        <div class="search-wrap" id="search-wrap">
-            <input class="search-input" id="search-input" type="text"
-                   placeholder="Search titles, notes, reflections…"
-                   autocomplete="off" spellcheck="false">
-            <button class="search-clear" id="search-clear" aria-label="Clear search">✕</button>
+            <!-- ── Dashboard view ── -->
+            <div id="view-dashboard">
+
+                <!-- Search -->
+                <div class="search-section">
+                    <div class="search-wrap">
+                        <span class="search-icon">⌕</span>
+                        <input class="search-input" id="search-input" type="text"
+                               placeholder="Search thoughts, names, stories…"
+                               autocomplete="off" spellcheck="false">
+                        <button class="search-clear" id="search-clear" aria-label="Clear">✕</button>
+                    </div>
+                </div>
+
+                <!-- Quick actions -->
+                <div class="quick-actions">
+                    <a class="action-btn" href="admin.html">
+                        <span class="action-sym">＋</span> New Post
+                    </a>
+                    <a class="action-btn" href="admin.html">
+                        <span class="action-sym">▦</span> New Category
+                    </a>
+                    <button class="action-btn" onclick="goRandom()">
+                        <span class="action-sym">↻</span> Random Entry
+                    </button>
+                </div>
+
+                <!-- Categories -->
+                <section class="section" id="sec-categories">
+                    <div class="section-header">
+                        <span class="section-title">Categories</span>
+                        <span class="section-badge" id="cat-count-badge"></span>
+                    </div>
+                    <div id="cat-grid-container">
+                        <p class="loading">Loading…</p>
+                    </div>
+                </section>
+
+                <!-- Recent entries -->
+                <section class="section" id="sec-recent">
+                    <div class="section-header">
+                        <span class="section-title">Recent Entries</span>
+                        <button class="section-link" onclick="showAllRecent()">See all</button>
+                    </div>
+                    <div class="entries-list" id="recent-list">
+                        <p class="loading">Loading…</p>
+                    </div>
+                </section>
+
+                <!-- Drafts -->
+                <section class="section" id="sec-drafts" style="display:none">
+                    <div class="section-header">
+                        <span class="section-title">Drafts</span>
+                        <span class="section-badge" id="draft-count-badge"></span>
+                    </div>
+                    <div id="drafts-list"></div>
+                </section>
+
+            </div>
+
+            <!-- ── Category post list view ── -->
+            <div id="view-category" style="display:none">
+                <div class="view-header">
+                    <a class="back-link" href="index.html">← All Categories</a>
+                    <h1 class="view-title" id="cat-view-title">Category</h1>
+                    <p class="view-meta" id="cat-view-meta"></p>
+                </div>
+
+                <!-- In-category search -->
+                <div class="search-section">
+                    <div class="search-wrap">
+                        <span class="search-icon">⌕</span>
+                        <input class="search-input" id="cat-search-input" type="text"
+                               placeholder="Search within this category…"
+                               autocomplete="off" spellcheck="false">
+                        <button class="search-clear" id="cat-search-clear" aria-label="Clear">✕</button>
+                    </div>
+                </div>
+
+                <div class="post-list" id="cat-post-list"></div>
+            </div>
+
+            <!-- ── Search results view ── -->
+            <div id="view-search" style="display:none">
+                <p class="search-results-header" id="search-results-label"></p>
+                <div class="post-list" id="search-post-list"></div>
+            </div>
+
         </div>
 
-        <p class="section-label" id="section-label">Categories</p>
-
-        <main>
-            <div id="posts-container"><p class="loading-state">Loading&hellip;</p></div>
-        </main>
-
-        <footer class="footer">
-            <p class="footer-text">بن زاحم &mdash; جميع الحقوق محفوظة</p>
+        <footer class="page-footer">
+            بن زاحم &mdash; جميع الحقوق محفوظة
         </footer>
     </div>
+</div>
 
-    <script>
-        const SUPABASE_URL = 'https://btkzjfxxxqukjdnbibsa.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0a3pqZnh4eHF1a2pkbmJpYnNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1NDk3NzMsImV4cCI6MjA5ODEyNTc3M30.FvJ5lXhYoBw1Ceinu3fLroFAEB5_iL_5Z2wn24gVXuE';
-        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+<script>
+const SUPABASE_URL = 'https://btkzjfxxxqukjdnbibsa.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0a3pqZnh4eHF1a2pkbmJpYnNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1NDk3NzMsImV4cCI6MjA5ODEyNTc3M30.FvJ5lXhYoBw1Ceinu3fLroFAEB5_iL_5Z2wn24gVXuE';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let allPosts = [];
-        let searchTimer = null;
+let allPosts = [];
+let allCategories = [];
+let catSearchPosts = [];
+let searchTimer = null;
 
-        function escapeHtml(str) {
-            return String(str)
-                .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+/* ── Utilities ── */
+
+function escapeHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function highlight(text, q) {
+    const esc = escapeHtml(text);
+    if (!q) return esc;
+    const safe = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return esc.replace(new RegExp('(' + safe + ')', 'gi'), '<mark>$1</mark>');
+}
+
+function fmtDate(iso) {
+    return new Date(iso).toLocaleDateString('en-GB', { year:'numeric', month:'long', day:'numeric' });
+}
+
+function catName(post) {
+    if (!post.category_id) return null;
+    const cat = allCategories.find(function(c) { return c.id === post.category_id; });
+    return cat ? cat.name : null;
+}
+
+/* ── Sidebar ── */
+
+function toggleSidebar() {
+    const sb = document.getElementById('sidebar');
+    const ov = document.getElementById('sidebar-overlay');
+    sb.classList.toggle('open');
+    ov.classList.toggle('visible');
+}
+
+function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('visible');
+}
+
+document.getElementById('sidebar-overlay').addEventListener('click', closeSidebar);
+
+function scrollTo(id) {
+    closeSidebar();
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ── View switching ── */
+
+function showView(name) {
+    ['dashboard','category','search'].forEach(function(v) {
+        document.getElementById('view-' + v).style.display = v === name ? '' : 'none';
+    });
+}
+
+function goHome() {
+    history.pushState({}, '', location.pathname);
+    showView('dashboard');
+    document.getElementById('search-input').value = '';
+    document.getElementById('search-clear').classList.remove('visible');
+}
+
+/* ── Dashboard ── */
+
+async function loadDashboard() {
+    const [{ data: cats, error: catErr }, { data: posts }] = await Promise.all([
+        sb.from('categories').select('*').order('name'),
+        sb.from('posts').select('*').order('created_at', { ascending: false })
+    ]);
+
+    if (catErr) {
+        document.getElementById('cat-grid-container').innerHTML =
+            '<div class="empty-state"><p class="empty-state-body" style="color:var(--red)">Categories table not found. Run the SQL migration first.</p></div>';
+    } else {
+        allCategories = cats || [];
+        renderCategoryGrid(cats || [], posts || []);
+    }
+
+    allPosts = posts || [];
+    renderRecentEntries(allPosts.slice(0, 6));
+    loadDrafts();
+    initDashboardSearch();
+}
+
+function renderCategoryGrid(cats, posts) {
+    const stats = {};
+    posts.forEach(function(p) {
+        const key = p.category_id || '__unc__';
+        if (!stats[key]) stats[key] = { count: 0, latest: null };
+        stats[key].count++;
+        if (!stats[key].latest || p.created_at > stats[key].latest) stats[key].latest = p.created_at;
+    });
+
+    const cards = cats.map(function(cat) {
+        const s = stats[cat.id] || { count: 0, latest: null };
+        return catCard(cat.id, escapeHtml(cat.name), cat.description ? escapeHtml(cat.description) : '', s.count, s.latest, '?cat=' + cat.id, false);
+    });
+
+    const unc = stats['__unc__'];
+    if (unc && unc.count > 0) {
+        cards.push(catCard('uncategorized', 'Uncategorized', '', unc.count, unc.latest, '?cat=uncategorized', true));
+    }
+
+    const total = cats.length + (unc ? 1 : 0);
+    document.getElementById('cat-count-badge').textContent = total + ' categor' + (total !== 1 ? 'ies' : 'y');
+
+    if (cards.length === 0) {
+        document.getElementById('cat-grid-container').innerHTML =
+            '<div class="empty-state">' +
+            '<div class="empty-state-icon">▦</div>' +
+            '<p class="empty-state-title">No categories yet</p>' +
+            '<p class="empty-state-body">Start building your archive by creating your first category.</p>' +
+            '<a class="empty-state-action" href="admin.html">Open Admin Panel</a>' +
+            '</div>';
+    } else {
+        document.getElementById('cat-grid-container').innerHTML =
+            '<div class="cat-grid">' + cards.join('') + '</div>';
+    }
+}
+
+function catCard(id, name, desc, count, latest, href, isUnc) {
+    const date = latest ? fmtDate(latest) : null;
+    return '<a class="cat-card' + (isUnc ? ' cat-card--unc' : '') + '" href="' + href + '">' +
+        '<div class="cat-card-name">' + name + '</div>' +
+        (desc ? '<div class="cat-card-desc">' + desc + '</div>' : '') +
+        '<div class="cat-card-meta">' +
+            '<span class="cat-card-count">' + count + (count !== 1 ? ' entries' : ' entry') + '</span>' +
+            (date ? '<span>·</span><span>' + date + '</span>' : '') +
+        '</div>' +
+        '</a>';
+}
+
+function renderRecentEntries(posts) {
+    const container = document.getElementById('recent-list');
+    if (!posts.length) {
+        container.innerHTML =
+            '<div class="empty-state">' +
+            '<p class="empty-state-title">No entries yet</p>' +
+            '<p class="empty-state-body">Your archive is empty. Write your first entry.</p>' +
+            '<a class="empty-state-action" href="admin.html">New Entry</a>' +
+            '</div>';
+        return;
+    }
+    container.innerHTML = posts.map(function(post) {
+        const date = fmtDate(post.created_at);
+        const cat = catName(post);
+        const excerpt = post.content.length > 160 ? post.content.slice(0, 160).trimEnd() + '…' : post.content;
+        return '<a class="entry-card" href="post.html?id=' + encodeURIComponent(post.id) + '" dir="auto">' +
+            '<div class="entry-card-header">' +
+                '<div class="entry-card-title">' + escapeHtml(post.title) + '</div>' +
+                '<span class="entry-card-open">Open →</span>' +
+            '</div>' +
+            '<div class="entry-card-meta">' +
+                '<span>' + date + '</span>' +
+                (cat ? '<span class="entry-card-cat">· ' + escapeHtml(cat) + '</span>' : '') +
+            '</div>' +
+            '<div class="entry-card-excerpt">' + escapeHtml(excerpt) + '</div>' +
+            '</a>';
+    }).join('');
+}
+
+async function loadDrafts() {
+    const { data, error } = await sb.from('posts').select('id, title, created_at').eq('is_draft', true).order('created_at', { ascending: false });
+    if (error || !data || data.length === 0) return;
+    document.getElementById('sec-drafts').style.display = '';
+    document.getElementById('draft-count-badge').textContent = data.length + ' draft' + (data.length !== 1 ? 's' : '');
+    document.getElementById('drafts-list').innerHTML = data.map(function(p) {
+        return '<div class="draft-card">' +
+            '<span class="draft-card-title">' + escapeHtml(p.title) + '</span>' +
+            '<span class="draft-card-date">' + fmtDate(p.created_at) + '</span>' +
+            '</div>';
+    }).join('');
+}
+
+function showAllRecent() {
+    renderRecentEntries(allPosts);
+    document.getElementById('sec-recent').scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ── Dashboard search ── */
+
+function initDashboardSearch() {
+    const input = document.getElementById('search-input');
+    const clear = document.getElementById('search-clear');
+
+    input.addEventListener('input', function() {
+        const q = this.value;
+        clear.classList.toggle('visible', q.length > 0);
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(function() {
+            if (!q.trim()) { showView('dashboard'); return; }
+            runSearch(q);
+        }, 180);
+    });
+
+    clear.addEventListener('click', function() {
+        input.value = '';
+        clear.classList.remove('visible');
+        showView('dashboard');
+    });
+}
+
+function runSearch(q) {
+    showView('search');
+    const lower = q.toLowerCase();
+    const results = allPosts.filter(function(p) {
+        return p.title.toLowerCase().includes(lower) || p.content.toLowerCase().includes(lower);
+    });
+    const label = document.getElementById('search-results-label');
+    label.innerHTML = results.length
+        ? '<strong>' + results.length + '</strong> result' + (results.length !== 1 ? 's' : '') + ' for "' + escapeHtml(q) + '"'
+        : 'No results for "' + escapeHtml(q) + '"';
+    document.getElementById('search-post-list').innerHTML = results.length
+        ? results.map(function(p) { return renderPostItem(p, q); }).join('')
+        : '<div class="empty-state"><p class="empty-state-body">Try different words or check your spelling.</p></div>';
+}
+
+/* ── Category view ── */
+
+async function loadCategoryView(catId) {
+    showView('category');
+
+    let catTitle = 'Uncategorized';
+    let query = sb.from('posts').select('*').order('created_at', { ascending: false });
+
+    if (catId === 'uncategorized') {
+        query = query.is('category_id', null);
+    } else {
+        query = query.eq('category_id', catId);
+        const { data: cat } = await sb.from('categories').select('*').eq('id', catId).single();
+        if (cat) {
+            catTitle = cat.name;
+            allCategories = allCategories.length ? allCategories : [cat];
         }
+    }
 
-        function highlight(text, query) {
-            const escaped = escapeHtml(text);
-            if (!query) return escaped;
-            const safe = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            return escaped.replace(new RegExp('(' + safe + ')', 'gi'), '<mark>$1</mark>');
-        }
+    const { data: posts } = await query;
+    catSearchPosts = posts || [];
 
-        /* ── Category hub ── */
+    document.getElementById('cat-view-title').textContent = catTitle;
+    document.getElementById('cat-view-meta').textContent =
+        (posts ? posts.length : 0) + ' entr' + (posts && posts.length !== 1 ? 'ies' : 'y');
 
-        async function showCategoryHub() {
-            const [{ data: cats, error }, { data: posts }] = await Promise.all([
-                sb.from('categories').select('*').order('name'),
-                sb.from('posts').select('id, category_id, created_at')
-            ]);
+    renderCatPosts(catSearchPosts, '');
+    initCatSearch();
+}
 
-            if (error) {
-                document.getElementById('posts-container').innerHTML =
-                    '<p class="empty-state" style="color:var(--error)">Categories table not found — run the SQL migration in Supabase first.</p>';
-                return;
-            }
+function renderCatPosts(posts, q) {
+    const container = document.getElementById('cat-post-list');
+    if (!posts.length) {
+        container.innerHTML = '<div class="empty-state"><p class="empty-state-body">No entries in this category yet.</p></div>';
+        return;
+    }
+    container.innerHTML = posts.map(function(p) { return renderPostItem(p, q); }).join('');
+}
 
-            const stats = {};
-            (posts || []).forEach(function (p) {
-                const key = p.category_id || '__unc__';
-                if (!stats[key]) stats[key] = { count: 0, latest: null };
-                stats[key].count++;
-                if (!stats[key].latest || p.created_at > stats[key].latest) stats[key].latest = p.created_at;
+function initCatSearch() {
+    const input = document.getElementById('cat-search-input');
+    const clear = document.getElementById('cat-search-clear');
+
+    input.addEventListener('input', function() {
+        const q = this.value;
+        clear.classList.toggle('visible', q.length > 0);
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(function() {
+            if (!q.trim()) { renderCatPosts(catSearchPosts, ''); return; }
+            const lower = q.toLowerCase();
+            const results = catSearchPosts.filter(function(p) {
+                return p.title.toLowerCase().includes(lower) || p.content.toLowerCase().includes(lower);
             });
+            renderCatPosts(results, q);
+        }, 180);
+    });
 
-            const cards = (cats || []).map(function (cat) {
-                const s = stats[cat.id] || { count: 0, latest: null };
-                return catCard(escapeHtml(cat.name), s.count, s.latest, '?cat=' + cat.id, false);
-            });
+    clear.addEventListener('click', function() {
+        input.value = '';
+        clear.classList.remove('visible');
+        renderCatPosts(catSearchPosts, '');
+    });
+}
 
-            const unc = stats['__unc__'];
-            if (unc && unc.count > 0) {
-                cards.push(catCard('Uncategorized', unc.count, unc.latest, '?cat=uncategorized', true));
-            }
+function renderPostItem(post, q) {
+    const date = fmtDate(post.created_at);
+    const excerpt = post.content.length > 200 ? post.content.slice(0, 200).trimEnd() + '…' : post.content;
+    return '<div class="post-item" dir="auto">' +
+        '<p class="post-item-date">' + date + '</p>' +
+        '<h2 class="post-item-title" dir="auto"><a href="post.html?id=' + encodeURIComponent(post.id) + '">' + highlight(post.title, q) + '</a></h2>' +
+        '<p class="post-item-excerpt" dir="auto">' + highlight(excerpt, q) + '</p>' +
+        '<a class="post-item-read" href="post.html?id=' + encodeURIComponent(post.id) + '">Read entry</a>' +
+        '</div>';
+}
 
-            const container = document.getElementById('posts-container');
-            if (cards.length === 0) {
-                container.innerHTML = '<p class="empty-state">No categories yet. Add some from the admin panel.</p>';
-            } else {
-                container.innerHTML = '<div class="cat-grid">' + cards.join('') + '</div>';
-            }
-        }
+/* ── Random entry ── */
 
-        function catCard(name, count, latest, href, isUnc) {
-            const date = latest
-                ? new Date(latest).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })
-                : null;
-            return '<a class="cat-card' + (isUnc ? ' cat-card--unc' : '') + '" href="' + href + '">' +
-                '<h2 class="cat-name">' + name + '</h2>' +
-                '<p class="cat-meta">' +
-                    '<span class="cat-count">' + count + ' post' + (count !== 1 ? 's' : '') + '</span>' +
-                    (date ? '<span class="cat-sep">·</span><span>Updated ' + date + '</span>' : '') +
-                '</p>' +
-                '</a>';
-        }
+function goRandom() {
+    if (!allPosts.length) {
+        alert('No entries yet.');
+        return;
+    }
+    const post = allPosts[Math.floor(Math.random() * allPosts.length)];
+    window.location.href = 'post.html?id=' + encodeURIComponent(post.id);
+}
 
-        /* ── Category post list ── */
+/* ── Boot ── */
 
-        async function showCategoryPosts(catId) {
-            document.getElementById('back-link').style.display = 'inline-block';
-            document.getElementById('search-wrap').style.display = 'block';
+async function boot() {
+    const catParam = new URLSearchParams(location.search).get('cat');
+    if (catParam !== null) {
+        await loadCategoryView(catParam);
+    } else {
+        showView('dashboard');
+        await loadDashboard();
+    }
+}
 
-            let catName = 'Uncategorized';
-            let query = sb.from('posts').select('*').order('created_at', { ascending: false });
+/* ── Auth ── */
 
-            if (catId === 'uncategorized') {
-                query = query.is('category_id', null);
-            } else {
-                query = query.eq('category_id', catId);
-                const { data: cat } = await sb.from('categories').select('name').eq('id', catId).single();
-                if (cat) catName = cat.name;
-            }
+(function() {
+    const PASSWORD = '99';
+    const KEY = 'ibzahemUnlocked';
+    const form = document.getElementById('lock-form');
+    const input = document.getElementById('lock-input');
+    const error = document.getElementById('lock-error');
 
-            const { data, error } = await query;
+    function unlock() {
+        document.getElementById('lock-screen').classList.add('hidden');
+        document.getElementById('app').style.display = '';
+        sessionStorage.setItem(KEY, 'true');
+        boot();
+    }
 
-            if (error) {
-                document.getElementById('posts-container').innerHTML = '<p class="empty-state">Error loading posts.</p>';
-                return;
-            }
+    if (sessionStorage.getItem(KEY) === 'true') { unlock(); return; }
 
-            document.getElementById('section-label').textContent = catName;
-            allPosts = data || [];
-            renderPosts(allPosts, '');
-            initSearch();
-        }
+    input.focus();
 
-        /* ── Post rendering ── */
-
-        function renderPosts(posts, query) {
-            const container = document.getElementById('posts-container');
-            const q = (query || '').trim();
-
-            if (posts.length === 0) {
-                container.innerHTML = '<p class="empty-state">' +
-                    (q ? 'Nothing found. Try different words.' : 'No posts in this category yet.') + '</p>';
-                return;
-            }
-
-            container.innerHTML = posts.map(function (post) {
-                const date = new Date(post.created_at).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
-                const raw = post.content.length > 220 ? post.content.slice(0, 220).trimEnd() + '…' : post.content;
-                return '<article class="post" dir="auto">' +
-                    '<p class="post-date">' + date + '</p>' +
-                    '<h2 class="post-title" dir="auto"><a href="post.html?id=' + encodeURIComponent(post.id) + '">' + highlight(post.title, q) + '</a></h2>' +
-                    '<p class="post-excerpt" dir="auto">' + highlight(raw, q) + '</p>' +
-                    '<a class="read-more" href="post.html?id=' + encodeURIComponent(post.id) + '">Continue Reading</a>' +
-                    '</article>';
-            }).join('');
-        }
-
-        /* ── Search ── */
-
-        function initSearch() {
-            const searchInput = document.getElementById('search-input');
-            const searchClear = document.getElementById('search-clear');
-
-            searchInput.addEventListener('input', function () {
-                const q = this.value;
-                searchClear.classList.toggle('visible', q.length > 0);
-                clearTimeout(searchTimer);
-                searchTimer = setTimeout(function () {
-                    if (!q.trim()) { renderPosts(allPosts, ''); return; }
-                    const lower = q.toLowerCase();
-                    const results = allPosts.filter(function (p) {
-                        return p.title.toLowerCase().includes(lower) || p.content.toLowerCase().includes(lower);
-                    });
-                    renderPosts(results, q);
-                }, 180);
-            });
-
-            searchClear.addEventListener('click', function () {
-                searchInput.value = '';
-                searchClear.classList.remove('visible');
-                renderPosts(allPosts, '');
-                searchInput.focus();
-            });
-        }
-
-        /* ── Bootstrap ── */
-
-        async function init() {
-            const catParam = new URLSearchParams(location.search).get('cat');
-            if (catParam !== null) {
-                await showCategoryPosts(catParam);
-            } else {
-                await showCategoryHub();
-            }
-        }
-
-        (function () {
-            var correctPassword = '99';
-            var storageKey = 'ibzahemUnlocked';
-            var form = document.getElementById('password-form');
-            var input = document.getElementById('password-input');
-            var error = document.getElementById('password-error');
-
-            function unlock() {
-                document.body.classList.remove('locked');
-                sessionStorage.setItem(storageKey, 'true');
-                init();
-            }
-
-            if (sessionStorage.getItem(storageKey) === 'true') { unlock(); return; }
-
-            input.focus();
-
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                if (input.value === correctPassword) { unlock(); return; }
-                error.textContent = 'Incorrect password. Please try again.';
-                input.value = '';
-                input.focus();
-            });
-        }());
-    </script>
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (input.value === PASSWORD) { unlock(); return; }
+        error.textContent = 'Incorrect passphrase.';
+        input.value = '';
+        input.focus();
+    });
+}());
+</script>
 
 </body>
 </html>
