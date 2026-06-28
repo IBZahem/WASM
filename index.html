@@ -264,7 +264,6 @@
             font-size: 0.95rem;
             color: var(--muted);
             line-height: 1.8;
-            max-width: 600px;
         }
 
         .read-more {
@@ -279,6 +278,9 @@
             border-bottom: 1px solid var(--gold);
             padding-bottom: 2px;
         }
+
+        .read-more::after { content: " →"; }
+        [dir="rtl"] .read-more::after { content: " ←"; }
 
         .read-more:hover {
             color: var(--text);
@@ -387,11 +389,11 @@
                 const date = new Date(post.created_at).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
                 const excerpt = post.content.length > 220 ? post.content.slice(0, 220).trimEnd() + '…' : post.content;
                 return `
-                    <article class="post">
+                    <article class="post" dir="auto">
                         <p class="post-date">${date}</p>
-                        <h2 class="post-title"><a href="post.html?id=${encodeURIComponent(post.id)}">${escapeHtml(post.title)}</a></h2>
-                        <p class="post-excerpt">${escapeHtml(excerpt)}</p>
-                        <a class="read-more" href="post.html?id=${encodeURIComponent(post.id)}">Continue Reading &rarr;</a>
+                        <h2 class="post-title"><a href="post.html?id=${encodeURIComponent(post.id)}" dir="auto">${escapeHtml(post.title)}</a></h2>
+                        <p class="post-excerpt" dir="auto">${escapeHtml(excerpt)}</p>
+                        <a class="read-more" href="post.html?id=${encodeURIComponent(post.id)}">Continue Reading</a>
                     </article>`;
             }).join('');
         }
