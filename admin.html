@@ -7,119 +7,197 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Playfair+Display+SC:wght@400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        :root {
+            --bg:        #111;
+            --surface:   #1c1c1c;
+            --gold:      #c9a84c;
+            --text:      #f0ebe2;
+            --muted:     #909090;
+            --dim:       #606060;
+            --border:    #333;
+            --border-sub:#242424;
+            --error:     #e07070;
+            --success:   #6dbf6d;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #0f0f0f; color: #e0d5c5; }
+
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
+
+        /* ── Login ── */
 
         #login {
             display: flex; flex-direction: column; align-items: center;
             justify-content: center; min-height: 100vh; padding: 20px;
         }
+
         #login h1 {
-            font-family: 'Playfair Display', serif; font-size: clamp(3rem, 10vw, 5rem);
-            font-weight: 900; margin-bottom: 8px;
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 10vw, 5rem);
+            font-weight: 900; margin-bottom: 12px;
         }
+
         #login p {
-            font-family: 'Playfair Display SC', serif; font-size: 0.62rem;
-            letter-spacing: 0.2em; text-transform: uppercase; color: #7a7a7a;
-            border-top: 1px solid #3a3a3a; border-bottom: 1px solid #3a3a3a;
-            padding: 8px 0; width: 100%; max-width: 400px; text-align: center;
-            margin-bottom: 24px;
-        }
-        #login input {
-            width: 100%; max-width: 400px; border: 1px solid #3a3a3a;
-            padding: 12px; font-size: 1rem; text-align: center;
-            letter-spacing: 4px; background: #1a1a1a; color: #e0d5c5; margin-bottom: 8px;
-        }
-        #login input:focus { outline: 2px solid #c8a96e; }
-        #login button {
-            background: #e0d5c5; color: #0f0f0f; border: none; padding: 12px 40px;
-            font-family: 'Playfair Display SC', serif; font-size: 0.62rem;
-            letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer;
-        }
-        #login button:hover { background: #c8a96e; }
-        #login .err { color: #d97070; font-style: italic; font-size: 0.9rem; margin-top: 8px; display: none; }
-
-        #app { display: none; max-width: 780px; margin: 0 auto; padding: 0 28px 60px; }
-
-        .masthead {
-            border-top: 6px solid #e0d5c5; padding-top: 10px; margin-top: 36px; text-align: center;
-        }
-        .masthead h1 {
-            font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 8vw, 4.5rem);
-            font-weight: 900; padding: 14px 0 10px;
-        }
-        .masthead-bottom { border-top: 1px solid #3a3a3a; border-bottom: 4px double #3a3a3a; height: 6px; }
-        .section-label {
-            font-family: 'Playfair Display SC', serif; font-size: 0.6rem;
-            letter-spacing: 0.25em; text-transform: uppercase; color: #7a7a7a;
-            text-align: center; padding: 12px 0; border-bottom: 1px solid #3a3a3a;
+            font-family: 'Playfair Display SC', serif; font-size: 0.64rem;
+            letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+            border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+            padding: 9px 0; width: 100%; max-width: 400px; text-align: center;
             margin-bottom: 28px;
         }
 
-        .form-section { border-top: 2px solid #e0d5c5; padding-top: 20px; margin-bottom: 40px; }
-        .form-section h2 {
-            font-family: 'Playfair Display', serif; font-size: 1.4rem;
-            margin-bottom: 16px;
+        #login input {
+            width: 100%; max-width: 400px;
+            border: 1px solid var(--border);
+            padding: 13px; font-size: 1rem; text-align: center;
+            letter-spacing: 4px; background: var(--surface); color: var(--text);
+            margin-bottom: 12px;
         }
-        input[type="text"], textarea {
-            width: 100%; border: 1px solid #3a3a3a; padding: 12px;
-            font-family: 'Inter', sans-serif; font-size: 0.95rem;
-            margin-bottom: 12px; background: #1a1a1a; color: #e0d5c5;
-        }
-        input[type="text"]:focus, textarea:focus { outline: 2px solid #c8a96e; border-color: #c8a96e; }
-        textarea { height: 220px; resize: vertical; }
-        .btn-publish {
-            background: #e0d5c5; color: #0f0f0f; border: none; padding: 12px 32px;
-            font-family: 'Playfair Display SC', serif; font-size: 0.62rem;
-            letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer;
-        }
-        .btn-publish:hover { background: #c8a96e; }
-        .success-msg { color: #6dbf6d; font-style: italic; font-size: 0.9rem; margin-top: 8px; display: none; }
 
-        .posts-section { border-top: 2px solid #e0d5c5; padding-top: 20px; }
-        .posts-section h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 16px; }
-        .post-item {
-            border-bottom: 1px solid #232323; padding: 16px 0;
-            display: flex; justify-content: space-between; align-items: center;
+        #login input:focus { outline: 2px solid var(--gold); }
+
+        #login button {
+            background: var(--gold); color: #111; border: none; padding: 13px 48px;
+            font-family: 'Playfair Display SC', serif; font-size: 0.64rem;
+            letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; font-weight: 700;
         }
-        .post-item h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; }
-        .post-item .date { font-size: 11px; color: #7a7a7a; margin-top: 4px; font-family: 'Playfair Display SC', serif; letter-spacing: 0.08em; }
-        .post-item-actions { display: flex; gap: 8px; flex-shrink: 0; }
-        .btn-edit {
-            background: transparent; color: #e0d5c5; border: 1px solid #3a3a3a;
-            padding: 6px 14px; font-family: 'Playfair Display SC', serif;
-            font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase;
-            cursor: pointer;
+
+        #login button:hover { background: #b8943e; }
+
+        #login .err {
+            color: var(--error); font-style: italic; font-size: 0.9rem;
+            margin-top: 12px; display: none;
         }
-        .btn-edit:hover { background: #e0d5c5; color: #0f0f0f; border-color: #e0d5c5; }
-        .btn-delete {
-            background: transparent; color: #d97070; border: 1px solid #d97070;
-            padding: 6px 14px; font-family: 'Playfair Display SC', serif;
-            font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase;
-            cursor: pointer;
+
+        /* ── App shell ── */
+
+        #app { display: none; max-width: 780px; margin: 0 auto; padding: 0 32px 80px; }
+
+        .masthead {
+            border-top: 5px solid var(--gold); padding-top: 12px; margin-top: 48px; text-align: center;
         }
-        .btn-delete:hover { background: #d97070; color: #0f0f0f; }
-        .btn-cancel {
-            background: transparent; color: #7a7a7a; border: none;
-            padding: 12px 0 0 16px; font-family: 'Playfair Display SC', serif;
-            font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase;
-            cursor: pointer;
+
+        .masthead h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-weight: 900; padding: 16px 0 12px;
         }
-        .btn-cancel:hover { color: #e0d5c5; }
-        .empty { font-style: italic; color: #555; font-size: 0.9rem; }
+
+        .masthead-bottom {
+            border-top: 1px solid var(--border);
+            border-bottom: 3px double var(--gold);
+            height: 7px;
+        }
+
+        .home-row {
+            display: flex;
+            justify-content: flex-end;
+            padding: 16px 0 0;
+        }
 
         .home-btn {
             display: inline-block;
-            background: #e0d5c5;
-            color: #0f0f0f;
+            background: transparent;
+            color: var(--muted);
             text-decoration: none;
-            padding: 10px 28px;
+            padding: 9px 24px;
             font-family: 'Playfair Display SC', serif;
-            font-size: 0.65rem;
-            letter-spacing: 0.2em;
+            font-size: 0.64rem;
+            letter-spacing: 0.18em;
             text-transform: uppercase;
+            border: 1px solid var(--border);
         }
-        .home-btn:hover { background: #c8a96e; }
+
+        .home-btn:hover { color: var(--text); border-color: var(--text); }
+
+        .section-label {
+            font-family: 'Playfair Display SC', serif; font-size: 0.66rem;
+            letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold);
+            text-align: center; padding: 14px 0 13px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 32px;
+        }
+
+        /* ── Form ── */
+
+        .form-section { border-top: 2px solid var(--gold); padding-top: 24px; margin-bottom: 48px; }
+
+        .form-section h2 {
+            font-family: 'Playfair Display', serif; font-size: 1.4rem;
+            margin-bottom: 20px; color: var(--text);
+        }
+
+        input[type="text"], textarea {
+            width: 100%; border: 1px solid var(--border); padding: 13px;
+            font-family: 'Inter', sans-serif; font-size: 0.95rem;
+            margin-bottom: 14px; background: var(--surface); color: var(--text);
+        }
+
+        input[type="text"]::placeholder, textarea::placeholder { color: var(--dim); }
+        input[type="text"]:focus, textarea:focus { outline: 2px solid var(--gold); border-color: var(--gold); }
+        textarea { height: 240px; resize: vertical; }
+
+        .btn-row { display: flex; align-items: center; gap: 16px; }
+
+        .btn-publish {
+            background: var(--gold); color: #111; border: none; padding: 12px 36px;
+            font-family: 'Playfair Display SC', serif; font-size: 0.64rem;
+            letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; font-weight: 700;
+        }
+
+        .btn-publish:hover { background: #b8943e; }
+
+        .success-msg { color: var(--success); font-style: italic; font-size: 0.9rem; display: none; }
+
+        /* ── Posts list ── */
+
+        .posts-section { border-top: 2px solid var(--gold); padding-top: 24px; }
+
+        .posts-section h2 {
+            font-family: 'Playfair Display', serif; font-size: 1.4rem;
+            margin-bottom: 20px; color: var(--text);
+        }
+
+        .post-item {
+            border-bottom: 1px solid var(--border-sub); padding: 18px 0;
+            display: flex; justify-content: space-between; align-items: center; gap: 16px;
+        }
+
+        .post-item h3 {
+            font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--text);
+        }
+
+        .post-item .date {
+            font-size: 11px; color: var(--gold); margin-top: 5px;
+            font-family: 'Playfair Display SC', serif; letter-spacing: 0.08em;
+        }
+
+        .post-item-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+        .btn-edit {
+            background: transparent; color: var(--muted); border: 1px solid var(--border);
+            padding: 7px 16px; font-family: 'Playfair Display SC', serif;
+            font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;
+        }
+
+        .btn-edit:hover { color: var(--text); border-color: var(--text); }
+
+        .btn-delete {
+            background: transparent; color: var(--error); border: 1px solid var(--error);
+            padding: 7px 16px; font-family: 'Playfair Display SC', serif;
+            font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;
+        }
+
+        .btn-delete:hover { background: var(--error); color: #111; }
+
+        .btn-cancel {
+            background: transparent; color: var(--dim); border: none;
+            font-family: 'Playfair Display SC', serif; font-size: 0.6rem;
+            letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;
+        }
+
+        .btn-cancel:hover { color: var(--muted); }
+
+        .empty { font-style: italic; color: var(--dim); font-size: 0.9rem; padding: 20px 0; }
     </style>
 </head>
 <body>
@@ -137,7 +215,8 @@
         <h1>Bin Zahim</h1>
         <div class="masthead-bottom"></div>
     </div>
-    <div style="text-align:right; padding: 12px 0 0;">
+
+    <div class="home-row">
         <a href="index.html" class="home-btn">&#8592; Home</a>
     </div>
 
@@ -147,9 +226,11 @@
         <h2 id="form-title">New Post</h2>
         <input type="text" id="title" placeholder="Post title" dir="auto">
         <textarea id="content" placeholder="Write your post here..." dir="auto"></textarea>
-        <button class="btn-publish" id="btn-submit" onclick="savePost()">Publish</button>
-        <button class="btn-cancel" id="btn-cancel" onclick="cancelEdit()" style="display:none">Cancel</button>
-        <div class="success-msg" id="msg"></div>
+        <div class="btn-row">
+            <button class="btn-publish" id="btn-submit" onclick="savePost()">Publish</button>
+            <button class="btn-cancel" id="btn-cancel" onclick="cancelEdit()" style="display:none">Cancel</button>
+            <span class="success-msg" id="msg"></span>
+        </div>
     </div>
 
     <div class="posts-section">
@@ -255,7 +336,7 @@ async function savePost() {
     }
     const msg = document.getElementById('msg');
     msg.textContent = isEditing ? 'Updated successfully!' : 'Published successfully!';
-    msg.style.display = 'block';
+    msg.style.display = 'inline';
     setTimeout(() => msg.style.display = 'none', 3000);
     loadPosts();
 }

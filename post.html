@@ -9,35 +9,37 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Playfair+Display+SC:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        :root {
+            --bg:        #111;
+            --surface:   #1c1c1c;
+            --gold:      #c9a84c;
+            --text:      #f0ebe2;
+            --muted:     #909090;
+            --dim:       #606060;
+            --border:    #333;
+            --border-sub:#242424;
+            --error:     #e07070;
         }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            background: #0f0f0f;
-            color: #e0d5c5;
+            background: var(--bg);
+            color: var(--text);
             font-family: 'Playfair Display', Georgia, serif;
             max-width: 780px;
             margin: 0 auto;
-            padding: 0 28px 60px;
+            padding: 0 32px 80px;
         }
 
-        body.locked {
-            min-height: 100vh;
-        }
+        body.locked { min-height: 100vh; }
+        body.locked .site-shell { display: none; }
+        body:not(.locked) .password-page { display: none; }
 
-        body.locked .site-shell {
-            display: none;
-        }
-
-        body:not(.locked) .password-page {
-            display: none;
-        }
+        /* ── Password screen ── */
 
         .password-page {
-            min-height: calc(100vh - 60px);
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -45,111 +47,110 @@
 
         .password-card {
             width: 100%;
-            border-top: 6px solid #e0d5c5;
-            border-bottom: 4px double #e0d5c5;
-            padding: 12px 0 24px;
+            max-width: 480px;
+            border-top: 5px solid var(--gold);
+            border-bottom: 1px solid var(--border);
+            padding: 28px 0 36px;
             text-align: center;
         }
 
         .password-kicker {
             display: flex;
             justify-content: space-between;
-            border-bottom: 1px solid #3a3a3a;
-            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            margin-bottom: 28px;
             font-family: 'Playfair Display SC', serif;
-            font-size: 0.65rem;
-            letter-spacing: 0.14em;
+            font-size: 0.64rem;
+            letter-spacing: 0.16em;
             text-transform: uppercase;
-            color: #7a7a7a;
+            color: var(--dim);
         }
 
         .password-title {
-            font-size: clamp(2.8rem, 10vw, 5.6rem);
+            font-size: clamp(3rem, 11vw, 6rem);
             font-weight: 900;
             letter-spacing: 0.04em;
             line-height: 1;
-            padding: 16px 0 10px;
+            padding: 0 0 20px;
         }
 
         .password-subtitle {
-            border-top: 1px solid #3a3a3a;
-            border-bottom: 1px solid #3a3a3a;
-            padding: 9px 0;
             font-family: 'Playfair Display SC', serif;
-            font-size: 0.62rem;
+            font-size: 0.64rem;
             letter-spacing: 0.2em;
             text-transform: uppercase;
-            color: #7a7a7a;
+            color: var(--muted);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 10px 0;
+            margin-bottom: 28px;
         }
 
-        .password-form {
-            max-width: 420px;
-            margin: 28px auto 0;
-            text-align: left;
-        }
+        .password-form { text-align: left; }
 
         .password-label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-family: 'Playfair Display SC', serif;
-            font-size: 0.64rem;
+            font-size: 0.66rem;
             letter-spacing: 0.18em;
             text-transform: uppercase;
-            color: #7a7a7a;
+            color: var(--muted);
         }
 
         .password-row {
             display: flex;
-            border: 1px solid #3a3a3a;
+            border: 1px solid var(--border);
         }
 
         .password-input {
             min-width: 0;
             flex: 1;
             border: 0;
-            border-right: 1px solid #3a3a3a;
-            padding: 12px 13px;
+            border-right: 1px solid var(--border);
+            padding: 13px 14px;
             font: 1rem Georgia, serif;
-            color: #e0d5c5;
-            background: #1a1a1a;
+            color: var(--text);
+            background: var(--surface);
         }
 
+        .password-input::placeholder { color: var(--dim); }
+
         .password-input:focus {
-            outline: 2px solid #c8a96e;
-            outline-offset: 2px;
+            outline: 2px solid var(--gold);
+            outline-offset: -1px;
         }
 
         .password-submit {
             border: 0;
-            background: #e0d5c5;
-            color: #0f0f0f;
-            padding: 0 16px;
+            background: var(--gold);
+            color: #111;
+            padding: 0 20px;
             font-family: 'Playfair Display SC', serif;
-            font-size: 0.62rem;
+            font-size: 0.64rem;
             letter-spacing: 0.16em;
             text-transform: uppercase;
             cursor: pointer;
+            font-weight: 700;
         }
 
-        .password-submit:hover,
-        .password-submit:focus-visible {
-            background: #c8a96e;
-        }
+        .password-submit:hover { background: #b8943e; }
 
         .password-error {
             min-height: 1.4em;
-            margin-top: 10px;
+            margin-top: 12px;
             font-style: italic;
             font-size: 0.9rem;
-            color: #d97070;
+            color: var(--error);
         }
 
         /* ── Masthead ── */
 
         .masthead {
-            border-top: 6px solid #e0d5c5;
-            padding-top: 10px;
-            margin-top: 36px;
+            border-top: 5px solid var(--gold);
+            padding-top: 12px;
+            margin-top: 48px;
             text-align: center;
         }
 
@@ -157,16 +158,16 @@
             display: flex;
             justify-content: space-between;
             font-family: 'Playfair Display SC', serif;
-            font-size: 0.65rem;
-            letter-spacing: 0.14em;
+            font-size: 0.66rem;
+            letter-spacing: 0.16em;
             text-transform: uppercase;
-            color: #7a7a7a;
-            padding-bottom: 8px;
+            color: var(--dim);
+            padding-bottom: 10px;
         }
 
         .masthead-rule {
             border: none;
-            border-top: 1px solid #3a3a3a;
+            border-top: 1px solid var(--border);
             margin: 0;
         }
 
@@ -175,7 +176,7 @@
             font-weight: 900;
             letter-spacing: 0.04em;
             line-height: 1;
-            padding: 14px 0 10px;
+            padding: 16px 0 12px;
         }
 
         .site-title a {
@@ -185,94 +186,92 @@
 
         .tagline {
             font-style: italic;
-            font-size: 0.88rem;
-            color: #7a7a7a;
+            font-size: 0.9rem;
+            color: var(--muted);
             letter-spacing: 0.03em;
-            padding: 8px 0;
+            padding: 0 0 14px;
         }
 
         .masthead-bottom {
-            border-top: 1px solid #3a3a3a;
-            border-bottom: 4px double #3a3a3a;
-            height: 6px;
-            margin-top: 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 3px double var(--gold);
+            height: 7px;
         }
 
         /* ── Post full view ── */
 
         .back-link {
             display: inline-block;
-            margin: 28px 0 0;
+            margin: 32px 0 0;
             font-family: 'Playfair Display SC', serif;
-            font-size: 0.62rem;
+            font-size: 0.64rem;
             letter-spacing: 0.18em;
             text-transform: uppercase;
-            color: #7a7a7a;
+            color: var(--muted);
             text-decoration: none;
-            border-bottom: 1px solid #3a3a3a;
+            border-bottom: 1px solid var(--border);
             padding-bottom: 2px;
         }
 
         .back-link:hover {
-            color: #e0d5c5;
-            border-bottom-color: #e0d5c5;
+            color: var(--text);
+            border-bottom-color: var(--text);
         }
 
         .post-full {
-            padding: 24px 0 0;
-            border-top: 2px solid #e0d5c5;
-            margin-top: 16px;
+            padding: 28px 0 0;
+            border-top: 2px solid var(--gold);
+            margin-top: 20px;
         }
 
         .post-full-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 18px;
         }
 
         .post-full-date {
             font-family: 'Playfair Display SC', serif;
             font-size: 0.68rem;
-            letter-spacing: 0.08em;
-            color: #7a7a7a;
+            letter-spacing: 0.1em;
+            color: var(--gold);
         }
 
         .btn-edit-post {
             font-family: 'Playfair Display SC', serif;
-            font-size: 0.58rem;
-            letter-spacing: 0.14em;
+            font-size: 0.6rem;
+            letter-spacing: 0.16em;
             text-transform: uppercase;
-            color: #e0d5c5;
-            border: 1px solid #3a3a3a;
-            padding: 6px 14px;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 6px 16px;
             text-decoration: none;
             background: transparent;
         }
 
         .btn-edit-post:hover {
-            background: #e0d5c5;
-            color: #0f0f0f;
-            border-color: #e0d5c5;
+            color: var(--text);
+            border-color: var(--text);
         }
 
         .post-full-title {
-            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            font-size: clamp(1.9rem, 5vw, 3rem);
             font-weight: 700;
-            line-height: 1.18;
-            margin-bottom: 24px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #3a3a3a;
+            line-height: 1.16;
+            margin-bottom: 28px;
+            padding-bottom: 22px;
+            border-bottom: 1px solid var(--border);
         }
 
         .post-body {
-            font-size: 1.05rem;
-            line-height: 1.85;
-            color: #c8bfb0;
+            font-size: 1.08rem;
+            line-height: 1.9;
+            color: #d8d0c4;
         }
 
         .post-body p {
-            margin-bottom: 1.3em;
+            margin-bottom: 1.4em;
         }
 
         .post-body p:last-child {
@@ -281,51 +280,33 @@
 
         .loading-state, .empty-state {
             font-style: italic;
-            color: #555;
+            color: var(--dim);
             font-size: 0.95rem;
-            padding: 30px 0;
+            padding: 40px 0;
         }
 
         /* ── Footer ── */
 
         .footer {
-            margin-top: 48px;
-            border-top: 4px double #3a3a3a;
-            padding-top: 16px;
+            margin-top: 64px;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
             text-align: center;
         }
 
         .footer-text {
             font-family: 'Playfair Display SC', serif;
-            font-size: 0.62rem;
-            letter-spacing: 0.16em;
+            font-size: 0.64rem;
+            letter-spacing: 0.18em;
             text-transform: uppercase;
-            color: #555;
+            color: var(--dim);
         }
 
         @media (max-width: 520px) {
-            body {
-                padding: 0 20px 44px;
-            }
-
-            .password-row {
-                display: block;
-                border: 0;
-            }
-
-            .password-input,
-            .password-submit {
-                width: 100%;
-            }
-
-            .password-input {
-                border: 1px solid #3a3a3a;
-            }
-
-            .password-submit {
-                min-height: 44px;
-                margin-top: 10px;
-            }
+            body { padding: 0 20px 56px; }
+            .password-row { display: block; border: 0; }
+            .password-input { width: 100%; border: 1px solid var(--border); }
+            .password-submit { width: 100%; min-height: 46px; margin-top: 10px; border: 0; }
         }
     </style>
 </head>
@@ -446,12 +427,10 @@
 
             form.addEventListener('submit', function (event) {
                 event.preventDefault();
-
                 if (input.value === correctPassword) {
                     unlock();
                     return;
                 }
-
                 error.textContent = 'Incorrect password. Please try again.';
                 input.value = '';
                 input.focus();
