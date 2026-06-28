@@ -215,6 +215,50 @@
             height: 7px;
         }
 
+        /* ── Search ── */
+
+        .search-wrap {
+            position: relative;
+            padding: 28px 0 0;
+        }
+
+        .search-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px 32px 10px 0;
+            font: italic 1rem 'Playfair Display', Georgia, serif;
+            letter-spacing: 0.02em;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .search-input::placeholder { color: var(--dim); font-style: italic; }
+
+        .search-input:focus {
+            outline: none;
+            border-bottom-color: var(--gold);
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 0;
+            bottom: 8px;
+            background: none;
+            border: none;
+            color: var(--dim);
+            font-size: 0.75rem;
+            cursor: pointer;
+            padding: 2px 4px;
+            line-height: 1;
+            display: none;
+        }
+
+        .search-clear:hover { color: var(--muted); }
+        .search-clear.visible { display: block; }
+
         /* ── Section label ── */
 
         .section-label {
@@ -257,9 +301,7 @@
             color: var(--text);
         }
 
-        .post-title a:hover {
-            color: var(--gold);
-        }
+        .post-title a:hover { color: var(--gold); }
 
         .post-excerpt {
             font-style: italic;
@@ -287,6 +329,15 @@
         .read-more:hover {
             color: var(--text);
             border-bottom-color: var(--text);
+        }
+
+        /* ── Search highlight ── */
+
+        mark {
+            background: rgba(201, 168, 76, 0.28);
+            color: inherit;
+            border-radius: 1px;
+            padding: 0 1px;
         }
 
         .loading-state, .empty-state {
@@ -356,7 +407,14 @@
             <div class="masthead-bottom"></div>
         </header>
 
-        <p class="section-label">Latest</p>
+        <div class="search-wrap">
+            <input class="search-input" id="search-input" type="text"
+                   placeholder="Search titles, notes, reflections…"
+                   autocomplete="off" spellcheck="false">
+            <button class="search-clear" id="search-clear" aria-label="Clear search">✕</button>
+        </div>
+
+        <p class="section-label" id="section-label">Latest</p>
 
         <main>
             <div id="posts-container"><p class="loading-state">Loading&hellip;</p></div>
@@ -372,12 +430,79 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0a3pqZnh4eHF1a2pkbmJpYnNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1NDk3NzMsImV4cCI6MjA5ODEyNTc3M30.FvJ5lXhYoBw1Ceinu3fLroFAEB5_iL_5Z2wn24gVXuE';
         const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        let allPosts = [];
+        let searchTimer = null;
+
         function escapeHtml(str) {
             return String(str)
                 .replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;');
+        }
+
+        function highlight(text, query) {
+            const escaped = escapeHtml(text);
+            if (!query) return escaped;
+            const safe = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            return escaped.replace(new RegExp('(' + safe + ')', 'gi'), '<mark>$1</mark>');
+        }
+
+        function renderPosts(posts, query) {
+            const container = document.getElementById('posts-container');
+            const label = document.getElementById('section-label');
+            const q = (query || '').trim();
+
+            if (posts.length === 0) {
+                label.textContent = q ? 'No results for "' + q + '"' : 'Latest';
+                container.innerHTML = '<p class="empty-state">' + (q ? 'Nothing found. Try different words.' : 'No posts yet.') + '</p>';
+                return;
+            }
+
+            label.textContent = q
+                ? posts.length + ' result' + (posts.length !== 1 ? 's' : '') + ' for "' + q + '"'
+                : 'Latest';
+
+            container.innerHTML = posts.map(function (post) {
+                const date = new Date(post.created_at).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+                const raw = post.content.length > 220 ? post.content.slice(0, 220).trimEnd() + '…' : post.content;
+                return '<article class="post" dir="auto">' +
+                    '<p class="post-date">' + date + '</p>' +
+                    '<h2 class="post-title" dir="auto"><a href="post.html?id=' + encodeURIComponent(post.id) + '">' + highlight(post.title, q) + '</a></h2>' +
+                    '<p class="post-excerpt" dir="auto">' + highlight(raw, q) + '</p>' +
+                    '<a class="read-more" href="post.html?id=' + encodeURIComponent(post.id) + '">Continue Reading</a>' +
+                    '</article>';
+            }).join('');
+        }
+
+        function initSearch() {
+            const searchInput = document.getElementById('search-input');
+            const searchClear = document.getElementById('search-clear');
+
+            searchInput.addEventListener('input', function () {
+                const q = this.value;
+                searchClear.classList.toggle('visible', q.length > 0);
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(function () {
+                    if (!q.trim()) {
+                        renderPosts(allPosts, '');
+                        return;
+                    }
+                    const lower = q.toLowerCase();
+                    const results = allPosts.filter(function (p) {
+                        return p.title.toLowerCase().includes(lower) ||
+                               p.content.toLowerCase().includes(lower);
+                    });
+                    renderPosts(results, q);
+                }, 180);
+            });
+
+            searchClear.addEventListener('click', function () {
+                searchInput.value = '';
+                searchClear.classList.remove('visible');
+                renderPosts(allPosts, '');
+                searchInput.focus();
+            });
         }
 
         async function loadPosts() {
@@ -387,17 +512,9 @@
                 container.innerHTML = '<p class="empty-state">No posts yet.</p>';
                 return;
             }
-            container.innerHTML = data.map(function (post) {
-                const date = new Date(post.created_at).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
-                const excerpt = post.content.length > 220 ? post.content.slice(0, 220).trimEnd() + '…' : post.content;
-                return `
-                    <article class="post" dir="auto">
-                        <p class="post-date">${date}</p>
-                        <h2 class="post-title" dir="auto"><a href="post.html?id=${encodeURIComponent(post.id)}">${escapeHtml(post.title)}</a></h2>
-                        <p class="post-excerpt" dir="auto">${escapeHtml(excerpt)}</p>
-                        <a class="read-more" href="post.html?id=${encodeURIComponent(post.id)}">Continue Reading</a>
-                    </article>`;
-            }).join('');
+            allPosts = data;
+            renderPosts(allPosts, '');
+            initSearch();
         }
 
         (function () {
