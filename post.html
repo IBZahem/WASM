@@ -388,7 +388,7 @@
         function renderBody(content) {
             return content
                 .split(/\n{2,}/)
-                .map(function (p) { return '<p>' + escapeHtml(p).replace(/\n/g, '<br>') + '</p>'; })
+                .map(function (p) { return '<p dir="auto">' + escapeHtml(p).replace(/\n/g, '<br>') + '</p>'; })
                 .join('');
         }
 
@@ -418,7 +418,7 @@
                         <p class="post-full-date">${date}</p>
                         <a class="btn-edit-post" href="admin.html?edit=${data.id}">Edit</a>
                     </div>
-                    <h2 class="post-full-title">${escapeHtml(data.title)}</h2>
+                    <h2 class="post-full-title" dir="auto">${escapeHtml(data.title)}</h2>
                     <div class="post-body">${renderBody(data.content)}</div>
                 </article>`;
         }
