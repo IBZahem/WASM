@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bin Zahim Blog</title>
+    <title>Bin Zahim</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Playfair+Display+SC:wght@400;700&display=swap" rel="stylesheet">
@@ -99,161 +99,112 @@
             color: var(--muted);
         }
 
-        .password-row {
-            display: flex;
-            border: 1px solid var(--border);
-        }
+        .password-row { display: flex; border: 1px solid var(--border); }
 
         .password-input {
-            min-width: 0;
-            flex: 1;
-            border: 0;
+            min-width: 0; flex: 1; border: 0;
             border-right: 1px solid var(--border);
             padding: 13px 14px;
             font: 1rem Georgia, serif;
-            color: var(--text);
-            background: var(--surface);
+            color: var(--text); background: var(--surface);
         }
 
         .password-input::placeholder { color: var(--dim); }
-
-        .password-input:focus {
-            outline: 2px solid var(--gold);
-            outline-offset: -1px;
-        }
+        .password-input:focus { outline: 2px solid var(--gold); outline-offset: -1px; }
 
         .password-submit {
-            border: 0;
-            background: var(--gold);
-            color: #111;
-            padding: 0 20px;
-            font-family: 'Playfair Display SC', serif;
-            font-size: 0.64rem;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            cursor: pointer;
-            font-weight: 700;
+            border: 0; background: var(--gold); color: #111; padding: 0 20px;
+            font-family: 'Playfair Display SC', serif; font-size: 0.64rem;
+            letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; font-weight: 700;
         }
 
         .password-submit:hover { background: #b8943e; }
 
         .password-error {
-            min-height: 1.4em;
-            margin-top: 12px;
-            font-style: italic;
-            font-size: 0.9rem;
-            color: var(--error);
+            min-height: 1.4em; margin-top: 12px;
+            font-style: italic; font-size: 0.9rem; color: var(--error);
         }
 
         /* ── Admin button ── */
 
         .admin-btn {
-            display: inline-block;
-            margin: 14px 0 0;
-            background: transparent;
-            color: var(--muted);
-            font-family: 'Playfair Display SC', serif;
-            font-size: 0.64rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            text-decoration: none;
-            border: 1px solid var(--border);
-            padding: 9px 24px;
-            transition: color 0.15s, border-color 0.15s;
+            display: inline-block; margin: 14px 0 0;
+            background: transparent; color: var(--muted);
+            font-family: 'Playfair Display SC', serif; font-size: 0.64rem;
+            letter-spacing: 0.18em; text-transform: uppercase;
+            text-decoration: none; border: 1px solid var(--border); padding: 9px 24px;
         }
 
-        .admin-btn:hover {
-            color: var(--text);
-            border-color: var(--text);
-        }
+        .admin-btn:hover { color: var(--text); border-color: var(--text); }
 
         /* ── Masthead ── */
 
         .masthead {
             border-top: 5px solid var(--gold);
-            padding-top: 12px;
-            margin-top: 48px;
-            text-align: center;
+            padding-top: 12px; margin-top: 48px; text-align: center;
         }
 
         .masthead-meta {
-            display: flex;
-            justify-content: space-between;
-            font-family: 'Playfair Display SC', serif;
-            font-size: 0.66rem;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            color: var(--muted);
-            padding-bottom: 10px;
+            display: flex; justify-content: space-between;
+            font-family: 'Playfair Display SC', serif; font-size: 0.66rem;
+            letter-spacing: 0.16em; text-transform: uppercase;
+            color: var(--muted); padding-bottom: 10px;
         }
 
-        .masthead-rule {
-            border: none;
-            border-top: 1px solid var(--border);
-            margin: 0;
-        }
+        .masthead-rule { border: none; border-top: 1px solid var(--border); margin: 0; }
 
         .site-title {
             font-size: clamp(3.5rem, 12vw, 6.5rem);
-            font-weight: 900;
-            letter-spacing: 0.04em;
-            line-height: 1;
-            padding: 16px 0 12px;
+            font-weight: 900; letter-spacing: 0.04em; line-height: 1; padding: 16px 0 12px;
         }
 
         .tagline {
-            font-style: italic;
-            font-size: 0.9rem;
-            color: var(--muted);
-            letter-spacing: 0.03em;
-            padding: 0 0 14px;
+            font-style: italic; font-size: 0.9rem;
+            color: var(--muted); letter-spacing: 0.03em; padding: 0 0 14px;
         }
 
         .masthead-bottom {
             border-top: 1px solid var(--border);
-            border-bottom: 3px double var(--gold);
-            height: 7px;
+            border-bottom: 3px double var(--gold); height: 7px;
         }
+
+        /* ── Navigation ── */
+
+        .back-link {
+            display: none;
+            margin: 28px 0 0;
+            font-family: 'Playfair Display SC', serif; font-size: 0.64rem;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            color: var(--gold); text-decoration: none;
+            border-bottom: 1px solid var(--gold); padding-bottom: 2px;
+        }
+
+        .back-link:hover { color: var(--text); border-bottom-color: var(--text); }
 
         /* ── Search ── */
 
         .search-wrap {
+            display: none;
             position: relative;
             padding: 28px 0 0;
         }
 
         .search-input {
-            width: 100%;
-            background: transparent;
-            border: none;
+            width: 100%; background: transparent; border: none;
             border-bottom: 1px solid var(--border);
-            color: var(--text);
-            padding: 10px 32px 10px 0;
+            color: var(--text); padding: 10px 32px 10px 0;
             font: italic 1rem 'Playfair Display', Georgia, serif;
             letter-spacing: 0.02em;
-            -webkit-appearance: none;
-            appearance: none;
+            -webkit-appearance: none; appearance: none;
         }
 
         .search-input::placeholder { color: var(--dim); font-style: italic; }
-
-        .search-input:focus {
-            outline: none;
-            border-bottom-color: var(--gold);
-        }
+        .search-input:focus { outline: none; border-bottom-color: var(--gold); }
 
         .search-clear {
-            position: absolute;
-            right: 0;
-            bottom: 8px;
-            background: none;
-            border: none;
-            color: var(--dim);
-            font-size: 0.75rem;
-            cursor: pointer;
-            padding: 2px 4px;
-            line-height: 1;
-            display: none;
+            position: absolute; right: 0; bottom: 8px;
+            background: none; border: none; color: var(--dim);
+            font-size: 0.75rem; cursor: pointer; padding: 2px 4px; display: none;
         }
 
         .search-clear:hover { color: var(--muted); }
@@ -262,19 +213,58 @@
         /* ── Section label ── */
 
         .section-label {
-            font-family: 'Playfair Display SC', serif;
-            font-size: 0.72rem;
-            letter-spacing: 0.35em;
-            text-transform: uppercase;
-            color: var(--gold);
-            text-align: center;
-            padding: 16px 0 15px;
-            margin-top: 12px;
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
+            font-family: 'Playfair Display SC', serif; font-size: 0.72rem;
+            letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold);
+            text-align: center; padding: 16px 0 15px; margin-top: 12px;
+            border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
         }
 
-        /* ── Post list ── */
+        /* ── Category hub grid ── */
+
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            margin-top: 2px;
+        }
+
+        .cat-card {
+            background: var(--bg);
+            padding: 32px 28px;
+            text-decoration: none;
+            color: var(--text);
+            display: block;
+            border-left: 3px solid transparent;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .cat-card:hover {
+            background: var(--surface);
+            border-left-color: var(--gold);
+        }
+
+        .cat-card--unc { opacity: 0.75; }
+        .cat-card--unc:hover { opacity: 1; }
+
+        .cat-name {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            font-weight: 700; line-height: 1.2; margin-bottom: 12px;
+            color: var(--text);
+        }
+
+        .cat-meta {
+            font-family: 'Playfair Display SC', serif;
+            font-size: 0.64rem; letter-spacing: 0.1em; color: var(--muted);
+            display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+        }
+
+        .cat-count { color: var(--gold); }
+        .cat-sep { color: var(--dim); }
+
+        /* ── Post list (category view) ── */
 
         .post {
             padding: 44px 0 40px;
@@ -282,90 +272,62 @@
         }
 
         .post-date {
-            font-family: 'Playfair Display SC', serif;
-            font-size: 0.68rem;
-            letter-spacing: 0.1em;
-            color: var(--gold);
-            margin-bottom: 14px;
+            font-family: 'Playfair Display SC', serif; font-size: 0.68rem;
+            letter-spacing: 0.1em; color: var(--gold); margin-bottom: 14px;
         }
 
         .post-title {
             font-size: clamp(1.8rem, 4.5vw, 2.4rem);
-            font-weight: 700;
-            line-height: 1.15;
-            margin-bottom: 16px;
+            font-weight: 700; line-height: 1.15; margin-bottom: 16px;
         }
 
-        .post-title a {
-            text-decoration: none;
-            color: var(--text);
-        }
-
+        .post-title a { text-decoration: none; color: var(--text); }
         .post-title a:hover { color: var(--gold); }
 
         .post-excerpt {
-            font-style: italic;
-            font-size: 1rem;
-            color: var(--muted);
-            line-height: 1.85;
+            font-style: italic; font-size: 1rem;
+            color: var(--muted); line-height: 1.85;
         }
 
         .read-more {
-            display: inline-block;
-            margin-top: 22px;
-            font-family: 'Playfair Display SC', serif;
-            font-size: 0.64rem;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            color: var(--gold);
-            text-decoration: none;
-            border-bottom: 1px solid var(--gold);
-            padding-bottom: 2px;
+            display: inline-block; margin-top: 22px;
+            font-family: 'Playfair Display SC', serif; font-size: 0.64rem;
+            letter-spacing: 0.22em; text-transform: uppercase;
+            color: var(--gold); text-decoration: none;
+            border-bottom: 1px solid var(--gold); padding-bottom: 2px;
         }
 
         .read-more::after { content: " →"; }
         [dir="rtl"] .read-more::after { content: " ←"; }
+        .read-more:hover { color: var(--text); border-bottom-color: var(--text); }
 
-        .read-more:hover {
-            color: var(--text);
-            border-bottom-color: var(--text);
-        }
-
-        /* ── Search highlight ── */
+        /* ── Match highlight ── */
 
         mark {
             background: rgba(201, 168, 76, 0.28);
-            color: inherit;
-            border-radius: 1px;
-            padding: 0 1px;
+            color: inherit; border-radius: 1px; padding: 0 1px;
         }
 
         .loading-state, .empty-state {
-            font-style: italic;
-            color: var(--dim);
-            font-size: 0.95rem;
-            padding: 40px 0;
+            font-style: italic; color: var(--dim);
+            font-size: 0.95rem; padding: 40px 0;
         }
 
         /* ── Footer ── */
 
         .footer {
-            margin-top: 64px;
-            border-top: 1px solid var(--border);
-            padding-top: 20px;
-            text-align: center;
+            margin-top: 64px; border-top: 1px solid var(--border);
+            padding-top: 20px; text-align: center;
         }
 
         .footer-text {
-            font-family: 'Playfair Display SC', serif;
-            font-size: 0.64rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--dim);
+            font-family: 'Playfair Display SC', serif; font-size: 0.64rem;
+            letter-spacing: 0.18em; text-transform: uppercase; color: var(--dim);
         }
 
         @media (max-width: 520px) {
             body { padding: 0 20px 56px; }
+            .cat-grid { grid-template-columns: 1fr; }
             .password-row { display: block; border: 0; }
             .password-input { width: 100%; border: 1px solid var(--border); }
             .password-submit { width: 100%; min-height: 46px; margin-top: 10px; border: 0; }
@@ -407,14 +369,16 @@
             <div class="masthead-bottom"></div>
         </header>
 
-        <div class="search-wrap">
+        <a class="back-link" id="back-link" href="index.html">&#8592; All Categories</a>
+
+        <div class="search-wrap" id="search-wrap">
             <input class="search-input" id="search-input" type="text"
                    placeholder="Search titles, notes, reflections…"
                    autocomplete="off" spellcheck="false">
             <button class="search-clear" id="search-clear" aria-label="Clear search">✕</button>
         </div>
 
-        <p class="section-label" id="section-label">Latest</p>
+        <p class="section-label" id="section-label">Categories</p>
 
         <main>
             <div id="posts-container"><p class="loading-state">Loading&hellip;</p></div>
@@ -435,10 +399,8 @@
 
         function escapeHtml(str) {
             return String(str)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;');
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
 
         function highlight(text, query) {
@@ -448,20 +410,100 @@
             return escaped.replace(new RegExp('(' + safe + ')', 'gi'), '<mark>$1</mark>');
         }
 
-        function renderPosts(posts, query) {
-            const container = document.getElementById('posts-container');
-            const label = document.getElementById('section-label');
-            const q = (query || '').trim();
+        /* ── Category hub ── */
 
-            if (posts.length === 0) {
-                label.textContent = q ? 'No results for "' + q + '"' : 'Latest';
-                container.innerHTML = '<p class="empty-state">' + (q ? 'Nothing found. Try different words.' : 'No posts yet.') + '</p>';
+        async function showCategoryHub() {
+            const [{ data: cats, error }, { data: posts }] = await Promise.all([
+                sb.from('categories').select('*').order('name'),
+                sb.from('posts').select('id, category_id, created_at')
+            ]);
+
+            if (error) {
+                document.getElementById('posts-container').innerHTML =
+                    '<p class="empty-state" style="color:var(--error)">Categories table not found — run the SQL migration in Supabase first.</p>';
                 return;
             }
 
-            label.textContent = q
-                ? posts.length + ' result' + (posts.length !== 1 ? 's' : '') + ' for "' + q + '"'
-                : 'Latest';
+            const stats = {};
+            (posts || []).forEach(function (p) {
+                const key = p.category_id || '__unc__';
+                if (!stats[key]) stats[key] = { count: 0, latest: null };
+                stats[key].count++;
+                if (!stats[key].latest || p.created_at > stats[key].latest) stats[key].latest = p.created_at;
+            });
+
+            const cards = (cats || []).map(function (cat) {
+                const s = stats[cat.id] || { count: 0, latest: null };
+                return catCard(escapeHtml(cat.name), s.count, s.latest, '?cat=' + cat.id, false);
+            });
+
+            const unc = stats['__unc__'];
+            if (unc && unc.count > 0) {
+                cards.push(catCard('Uncategorized', unc.count, unc.latest, '?cat=uncategorized', true));
+            }
+
+            const container = document.getElementById('posts-container');
+            if (cards.length === 0) {
+                container.innerHTML = '<p class="empty-state">No categories yet. Add some from the admin panel.</p>';
+            } else {
+                container.innerHTML = '<div class="cat-grid">' + cards.join('') + '</div>';
+            }
+        }
+
+        function catCard(name, count, latest, href, isUnc) {
+            const date = latest
+                ? new Date(latest).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })
+                : null;
+            return '<a class="cat-card' + (isUnc ? ' cat-card--unc' : '') + '" href="' + href + '">' +
+                '<h2 class="cat-name">' + name + '</h2>' +
+                '<p class="cat-meta">' +
+                    '<span class="cat-count">' + count + ' post' + (count !== 1 ? 's' : '') + '</span>' +
+                    (date ? '<span class="cat-sep">·</span><span>Updated ' + date + '</span>' : '') +
+                '</p>' +
+                '</a>';
+        }
+
+        /* ── Category post list ── */
+
+        async function showCategoryPosts(catId) {
+            document.getElementById('back-link').style.display = 'inline-block';
+            document.getElementById('search-wrap').style.display = 'block';
+
+            let catName = 'Uncategorized';
+            let query = sb.from('posts').select('*').order('created_at', { ascending: false });
+
+            if (catId === 'uncategorized') {
+                query = query.is('category_id', null);
+            } else {
+                query = query.eq('category_id', catId);
+                const { data: cat } = await sb.from('categories').select('name').eq('id', catId).single();
+                if (cat) catName = cat.name;
+            }
+
+            const { data, error } = await query;
+
+            if (error) {
+                document.getElementById('posts-container').innerHTML = '<p class="empty-state">Error loading posts.</p>';
+                return;
+            }
+
+            document.getElementById('section-label').textContent = catName;
+            allPosts = data || [];
+            renderPosts(allPosts, '');
+            initSearch();
+        }
+
+        /* ── Post rendering ── */
+
+        function renderPosts(posts, query) {
+            const container = document.getElementById('posts-container');
+            const q = (query || '').trim();
+
+            if (posts.length === 0) {
+                container.innerHTML = '<p class="empty-state">' +
+                    (q ? 'Nothing found. Try different words.' : 'No posts in this category yet.') + '</p>';
+                return;
+            }
 
             container.innerHTML = posts.map(function (post) {
                 const date = new Date(post.created_at).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -475,6 +517,8 @@
             }).join('');
         }
 
+        /* ── Search ── */
+
         function initSearch() {
             const searchInput = document.getElementById('search-input');
             const searchClear = document.getElementById('search-clear');
@@ -484,14 +528,10 @@
                 searchClear.classList.toggle('visible', q.length > 0);
                 clearTimeout(searchTimer);
                 searchTimer = setTimeout(function () {
-                    if (!q.trim()) {
-                        renderPosts(allPosts, '');
-                        return;
-                    }
+                    if (!q.trim()) { renderPosts(allPosts, ''); return; }
                     const lower = q.toLowerCase();
                     const results = allPosts.filter(function (p) {
-                        return p.title.toLowerCase().includes(lower) ||
-                               p.content.toLowerCase().includes(lower);
+                        return p.title.toLowerCase().includes(lower) || p.content.toLowerCase().includes(lower);
                     });
                     renderPosts(results, q);
                 }, 180);
@@ -505,16 +545,15 @@
             });
         }
 
-        async function loadPosts() {
-            const container = document.getElementById('posts-container');
-            const { data, error } = await sb.from('posts').select('*').order('created_at', { ascending: false });
-            if (error || !data || data.length === 0) {
-                container.innerHTML = '<p class="empty-state">No posts yet.</p>';
-                return;
+        /* ── Bootstrap ── */
+
+        async function init() {
+            const catParam = new URLSearchParams(location.search).get('cat');
+            if (catParam !== null) {
+                await showCategoryPosts(catParam);
+            } else {
+                await showCategoryHub();
             }
-            allPosts = data;
-            renderPosts(allPosts, '');
-            initSearch();
         }
 
         (function () {
@@ -527,22 +566,16 @@
             function unlock() {
                 document.body.classList.remove('locked');
                 sessionStorage.setItem(storageKey, 'true');
-                loadPosts();
+                init();
             }
 
-            if (sessionStorage.getItem(storageKey) === 'true') {
-                unlock();
-                return;
-            }
+            if (sessionStorage.getItem(storageKey) === 'true') { unlock(); return; }
 
             input.focus();
 
-            form.addEventListener('submit', function (event) {
-                event.preventDefault();
-                if (input.value === correctPassword) {
-                    unlock();
-                    return;
-                }
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                if (input.value === correctPassword) { unlock(); return; }
                 error.textContent = 'Incorrect password. Please try again.';
                 input.value = '';
                 input.focus();

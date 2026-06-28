@@ -21,7 +21,6 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
 
         /* ── Login ── */
@@ -33,24 +32,20 @@
 
         #login h1 {
             font-family: 'Playfair Display', serif;
-            font-size: clamp(3rem, 10vw, 5rem);
-            font-weight: 900; margin-bottom: 12px;
+            font-size: clamp(3rem, 10vw, 5rem); font-weight: 900; margin-bottom: 12px;
         }
 
         #login p {
             font-family: 'Playfair Display SC', serif; font-size: 0.64rem;
             letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
             border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-            padding: 9px 0; width: 100%; max-width: 400px; text-align: center;
-            margin-bottom: 28px;
+            padding: 9px 0; width: 100%; max-width: 400px; text-align: center; margin-bottom: 28px;
         }
 
         #login input {
-            width: 100%; max-width: 400px;
-            border: 1px solid var(--border);
+            width: 100%; max-width: 400px; border: 1px solid var(--border);
             padding: 13px; font-size: 1rem; text-align: center;
-            letter-spacing: 4px; background: var(--surface); color: var(--text);
-            margin-bottom: 12px;
+            letter-spacing: 4px; background: var(--surface); color: var(--text); margin-bottom: 12px;
         }
 
         #login input:focus { outline: 2px solid var(--gold); }
@@ -62,11 +57,7 @@
         }
 
         #login button:hover { background: #b8943e; }
-
-        #login .err {
-            color: var(--error); font-style: italic; font-size: 0.9rem;
-            margin-top: 12px; display: none;
-        }
+        #login .err { color: var(--error); font-style: italic; font-size: 0.9rem; margin-top: 12px; display: none; }
 
         /* ── App shell ── */
 
@@ -78,33 +69,18 @@
 
         .masthead h1 {
             font-family: 'Playfair Display', serif;
-            font-size: clamp(2.5rem, 8vw, 4.5rem);
-            font-weight: 900; padding: 16px 0 12px;
+            font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 900; padding: 16px 0 12px;
         }
 
-        .masthead-bottom {
-            border-top: 1px solid var(--border);
-            border-bottom: 3px double var(--gold);
-            height: 7px;
-        }
+        .masthead-bottom { border-top: 1px solid var(--border); border-bottom: 3px double var(--gold); height: 7px; }
 
-        .home-row {
-            display: flex;
-            justify-content: flex-end;
-            padding: 16px 0 0;
-        }
+        .home-row { display: flex; justify-content: flex-end; padding: 16px 0 0; }
 
         .home-btn {
-            display: inline-block;
-            background: transparent;
-            color: var(--muted);
-            text-decoration: none;
-            padding: 9px 24px;
-            font-family: 'Playfair Display SC', serif;
-            font-size: 0.64rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            border: 1px solid var(--border);
+            display: inline-block; background: transparent; color: var(--muted);
+            text-decoration: none; padding: 9px 24px;
+            font-family: 'Playfair Display SC', serif; font-size: 0.64rem;
+            letter-spacing: 0.18em; text-transform: uppercase; border: 1px solid var(--border);
         }
 
         .home-btn:hover { color: var(--text); border-color: var(--text); }
@@ -112,33 +88,30 @@
         .section-label {
             font-family: 'Playfair Display SC', serif; font-size: 0.72rem;
             letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold);
-            text-align: center; padding: 16px 0 15px;
-            margin-top: 12px;
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
+            text-align: center; padding: 16px 0 15px; margin-top: 12px;
+            border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
             margin-bottom: 36px;
         }
 
-        /* ── Form ── */
+        /* ── Shared input styles ── */
 
-        .form-section { border-top: 2px solid var(--gold); padding-top: 28px; margin-bottom: 56px; }
-
-        .form-section h2 {
-            font-family: 'Playfair Display', serif; font-size: 1.7rem;
-            font-weight: 700; margin-bottom: 24px; color: var(--text);
-        }
-
-        input[type="text"], textarea {
+        input[type="text"], textarea, select {
             width: 100%; border: 1px solid var(--border); padding: 13px;
             font-family: 'Inter', sans-serif; font-size: 0.95rem;
             margin-bottom: 14px; background: var(--surface); color: var(--text);
         }
 
         input[type="text"]::placeholder, textarea::placeholder { color: var(--dim); }
-        input[type="text"]:focus, textarea:focus { outline: 2px solid var(--gold); border-color: var(--gold); }
+        input[type="text"]:focus, textarea:focus, select:focus {
+            outline: 2px solid var(--gold); border-color: var(--gold);
+        }
+
         textarea { height: 240px; resize: vertical; }
 
-        .btn-row { display: flex; align-items: center; gap: 16px; }
+        select { cursor: pointer; }
+        select option { background: var(--surface); }
+
+        .btn-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 
         .btn-publish {
             background: var(--gold); color: #111; border: none; padding: 12px 36px;
@@ -148,7 +121,77 @@
 
         .btn-publish:hover { background: #b8943e; }
 
+        .btn-sm {
+            background: transparent; color: var(--muted); border: 1px solid var(--border);
+            padding: 10px 20px; font-family: 'Playfair Display SC', serif; font-size: 0.6rem;
+            letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;
+        }
+
+        .btn-sm:hover { color: var(--text); border-color: var(--text); }
+
         .success-msg { color: var(--success); font-style: italic; font-size: 0.9rem; display: none; }
+
+        /* ── Categories section ── */
+
+        .categories-section { border-top: 2px solid var(--gold); padding-top: 28px; margin-bottom: 56px; }
+
+        .categories-section h2 {
+            font-family: 'Playfair Display', serif; font-size: 1.7rem;
+            font-weight: 700; margin-bottom: 24px; color: var(--text);
+        }
+
+        .cat-add-row { display: flex; gap: 12px; margin-bottom: 20px; }
+
+        .cat-add-row input { margin-bottom: 0; flex: 1; }
+
+        .cat-add-row button {
+            background: var(--gold); color: #111; border: none; padding: 0 24px;
+            font-family: 'Playfair Display SC', serif; font-size: 0.62rem;
+            letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; font-weight: 700;
+            white-space: nowrap; flex-shrink: 0;
+        }
+
+        .cat-add-row button:hover { background: #b8943e; }
+
+        .cat-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 13px 0; border-bottom: 1px solid var(--border-sub);
+        }
+
+        .cat-item-name {
+            font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--text);
+        }
+
+        .btn-delete {
+            background: transparent; color: var(--error); border: 1px solid var(--error);
+            padding: 6px 14px; font-family: 'Playfair Display SC', serif;
+            font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;
+        }
+
+        .btn-delete:hover { background: var(--error); color: #111; }
+
+        /* ── Post form ── */
+
+        .form-section { border-top: 2px solid var(--gold); padding-top: 28px; margin-bottom: 56px; }
+
+        .form-section h2 {
+            font-family: 'Playfair Display', serif; font-size: 1.7rem;
+            font-weight: 700; margin-bottom: 24px; color: var(--text);
+        }
+
+        .form-label {
+            display: block; margin-bottom: 8px;
+            font-family: 'Playfair Display SC', serif; font-size: 0.62rem;
+            letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
+        }
+
+        .btn-cancel {
+            background: transparent; color: var(--dim); border: none;
+            font-family: 'Playfair Display SC', serif; font-size: 0.6rem;
+            letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;
+        }
+
+        .btn-cancel:hover { color: var(--muted); }
 
         /* ── Posts list ── */
 
@@ -164,14 +207,11 @@
             display: flex; justify-content: space-between; align-items: center; gap: 16px;
         }
 
-        .post-item h3 {
-            font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--text);
-        }
+        .post-item h3 { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--text); }
 
-        .post-item .date {
-            font-size: 11px; color: var(--gold); margin-top: 5px;
-            font-family: 'Playfair Display SC', serif; letter-spacing: 0.08em;
-        }
+        .post-item-meta { font-size: 11px; margin-top: 5px; font-family: 'Playfair Display SC', serif; letter-spacing: 0.08em; }
+        .post-item-date { color: var(--gold); }
+        .post-item-cat { color: var(--muted); margin-left: 8px; }
 
         .post-item-actions { display: flex; gap: 8px; flex-shrink: 0; }
 
@@ -182,22 +222,6 @@
         }
 
         .btn-edit:hover { color: var(--text); border-color: var(--text); }
-
-        .btn-delete {
-            background: transparent; color: var(--error); border: 1px solid var(--error);
-            padding: 7px 16px; font-family: 'Playfair Display SC', serif;
-            font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;
-        }
-
-        .btn-delete:hover { background: var(--error); color: #111; }
-
-        .btn-cancel {
-            background: transparent; color: var(--dim); border: none;
-            font-family: 'Playfair Display SC', serif; font-size: 0.6rem;
-            letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;
-        }
-
-        .btn-cancel:hover { color: var(--muted); }
 
         .empty { font-style: italic; color: var(--dim); font-size: 0.9rem; padding: 20px 0; }
     </style>
@@ -224,9 +248,24 @@
 
     <div class="section-label">Content Manager</div>
 
+    <!-- Categories -->
+    <div class="categories-section">
+        <h2>Categories</h2>
+        <div class="cat-add-row">
+            <input type="text" id="cat-name" placeholder="New category name" dir="auto">
+            <button onclick="addCategory()">Add</button>
+        </div>
+        <div id="cat-list"></div>
+    </div>
+
+    <!-- Post form -->
     <div class="form-section">
         <h2 id="form-title">New Post</h2>
         <input type="text" id="title" placeholder="Post title" dir="auto">
+        <label class="form-label" for="post-category">Category</label>
+        <select id="post-category">
+            <option value="">— Uncategorized —</option>
+        </select>
         <textarea id="content" placeholder="Write your post here..." dir="auto"></textarea>
         <div class="btn-row">
             <button class="btn-publish" id="btn-submit" onclick="savePost()">Publish</button>
@@ -235,6 +274,7 @@
         </div>
     </div>
 
+    <!-- Posts list -->
     <div class="posts-section">
         <h2>All Posts</h2>
         <div id="posts-list"></div>
@@ -245,19 +285,21 @@
 const SUPABASE_URL = 'https://btkzjfxxxqukjdnbibsa.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0a3pqZnh4eHF1a2pkbmJpYnNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1NDk3NzMsImV4cCI6MjA5ODEyNTc3M30.FvJ5lXhYoBw1Ceinu3fLroFAEB5_iL_5Z2wn24gVXuE';
 const ADMIN_PASSWORD = '99';
-
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+function escapeHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
 function showApp() {
     document.getElementById('login').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     sessionStorage.setItem('ibzahemUnlocked', 'true');
+    loadCategories();
     loadPosts();
 }
 
-if (sessionStorage.getItem('ibzahemUnlocked') === 'true') {
-    showApp();
-}
+if (sessionStorage.getItem('ibzahemUnlocked') === 'true') showApp();
 
 function login() {
     if (document.getElementById('pw').value === ADMIN_PASSWORD) {
@@ -266,6 +308,62 @@ function login() {
         document.getElementById('err').style.display = 'block';
     }
 }
+
+/* ── Categories ── */
+
+let categoriesCache = {};
+
+async function loadCategories() {
+    const { data, error } = await sb.from('categories').select('*').order('name');
+    const list = document.getElementById('cat-list');
+    const select = document.getElementById('post-category');
+    categoriesCache = {};
+
+    if (error) {
+        list.innerHTML = '<p class="empty" style="color:var(--error)">Categories table not found — run the SQL migration.</p>';
+        return;
+    }
+
+    if (!data || data.length === 0) {
+        list.innerHTML = '<p class="empty">No categories yet.</p>';
+    } else {
+        list.innerHTML = data.map(function (cat) {
+            categoriesCache[cat.id] = cat;
+            return '<div class="cat-item">' +
+                '<span class="cat-item-name">' + escapeHtml(cat.name) + '</span>' +
+                '<button class="btn-delete" onclick="deleteCategory(\'' + cat.id + '\')">Delete</button>' +
+                '</div>';
+        }).join('');
+    }
+
+    select.innerHTML = '<option value="">— Uncategorized —</option>' +
+        (data || []).map(function (cat) {
+            return '<option value="' + cat.id + '">' + escapeHtml(cat.name) + '</option>';
+        }).join('');
+}
+
+async function addCategory() {
+    const input = document.getElementById('cat-name');
+    const name = input.value.trim();
+    if (!name) return;
+    const { error } = await sb.from('categories').insert({ name });
+    if (error) { alert('Error: ' + error.message); return; }
+    input.value = '';
+    loadCategories();
+}
+
+document.getElementById('cat-name').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') addCategory();
+});
+
+async function deleteCategory(id) {
+    if (!confirm('Delete this category? Posts will become uncategorized.')) return;
+    await sb.from('categories').delete().eq('id', id);
+    loadCategories();
+    loadPosts();
+}
+
+/* ── Posts ── */
 
 let editingId = null;
 const postsCache = {};
@@ -278,20 +376,23 @@ async function loadPosts() {
         list.innerHTML = '<p class="empty">No posts yet.</p>';
         return;
     }
-    data.forEach(post => {
+    data.forEach(function (post) {
         postsCache[post.id] = post;
         const date = new Date(post.created_at).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
-        list.innerHTML += `
-            <div class="post-item">
-                <div>
-                    <h3>${post.title}</h3>
-                    <div class="date">${date}</div>
-                </div>
-                <div class="post-item-actions">
-                    <button class="btn-edit" onclick="editPost('${post.id}')">Edit</button>
-                    <button class="btn-delete" onclick="deletePost('${post.id}')">Delete</button>
-                </div>
-            </div>`;
+        const catName = post.category_id ? (categoriesCache[post.category_id] ? categoriesCache[post.category_id].name : '…') : 'Uncategorized';
+        list.innerHTML += '<div class="post-item">' +
+            '<div>' +
+                '<h3>' + escapeHtml(post.title) + '</h3>' +
+                '<div class="post-item-meta">' +
+                    '<span class="post-item-date">' + date + '</span>' +
+                    '<span class="post-item-cat">' + escapeHtml(catName) + '</span>' +
+                '</div>' +
+            '</div>' +
+            '<div class="post-item-actions">' +
+                '<button class="btn-edit" onclick="editPost(\'' + post.id + '\')">Edit</button>' +
+                '<button class="btn-delete" onclick="deletePost(\'' + post.id + '\')">Delete</button>' +
+            '</div>' +
+            '</div>';
     });
 
     const editId = new URLSearchParams(window.location.search).get('edit');
@@ -304,6 +405,7 @@ function editPost(id) {
     editingId = id;
     document.getElementById('title').value = post.title;
     document.getElementById('content').value = post.content;
+    document.getElementById('post-category').value = post.category_id || '';
     document.getElementById('form-title').textContent = 'Edit Post';
     document.getElementById('btn-submit').textContent = 'Save';
     document.getElementById('btn-cancel').style.display = 'inline-block';
@@ -315,6 +417,7 @@ function cancelEdit() {
     editingId = null;
     document.getElementById('title').value = '';
     document.getElementById('content').value = '';
+    document.getElementById('post-category').value = '';
     document.getElementById('form-title').textContent = 'New Post';
     document.getElementById('btn-submit').textContent = 'Publish';
     document.getElementById('btn-cancel').style.display = 'none';
@@ -324,22 +427,24 @@ function cancelEdit() {
 async function savePost() {
     const title = document.getElementById('title').value.trim();
     const content = document.getElementById('content').value.trim();
+    const category_id = document.getElementById('post-category').value || null;
     if (!title || !content) return alert('Please fill in both fields!');
     const isEditing = !!editingId;
     if (isEditing) {
-        const { error } = await sb.from('posts').update({ title, content }).eq('id', editingId);
+        const { error } = await sb.from('posts').update({ title, content, category_id }).eq('id', editingId);
         if (error) { alert('Error: ' + error.message); return; }
         cancelEdit();
     } else {
-        const { error } = await sb.from('posts').insert({ title, content });
+        const { error } = await sb.from('posts').insert({ title, content, category_id });
         if (error) { alert('Error: ' + error.message); return; }
         document.getElementById('title').value = '';
         document.getElementById('content').value = '';
+        document.getElementById('post-category').value = '';
     }
     const msg = document.getElementById('msg');
     msg.textContent = isEditing ? 'Updated successfully!' : 'Published successfully!';
     msg.style.display = 'inline';
-    setTimeout(() => msg.style.display = 'none', 3000);
+    setTimeout(function () { msg.style.display = 'none'; }, 3000);
     loadPosts();
 }
 
