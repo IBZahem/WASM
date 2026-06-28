@@ -391,7 +391,7 @@
                 return `
                     <article class="post" dir="auto">
                         <p class="post-date">${date}</p>
-                        <h2 class="post-title"><a href="post.html?id=${encodeURIComponent(post.id)}" dir="auto">${escapeHtml(post.title)}</a></h2>
+                        <h2 class="post-title" dir="auto"><a href="post.html?id=${encodeURIComponent(post.id)}">${escapeHtml(post.title)}</a></h2>
                         <p class="post-excerpt" dir="auto">${escapeHtml(excerpt)}</p>
                         <a class="read-more" href="post.html?id=${encodeURIComponent(post.id)}">Continue Reading</a>
                     </article>`;
