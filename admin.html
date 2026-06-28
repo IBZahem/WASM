@@ -8,7 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #fff; color: #111; }
+        body { font-family: 'Inter', sans-serif; background: #0f0f0f; color: #e0d5c5; }
 
         #login {
             display: flex; flex-direction: column; align-items: center;
@@ -20,91 +20,106 @@
         }
         #login p {
             font-family: 'Playfair Display SC', serif; font-size: 0.62rem;
-            letter-spacing: 0.2em; text-transform: uppercase; color: #444;
-            border-top: 1px solid #111; border-bottom: 1px solid #111;
+            letter-spacing: 0.2em; text-transform: uppercase; color: #7a7a7a;
+            border-top: 1px solid #3a3a3a; border-bottom: 1px solid #3a3a3a;
             padding: 8px 0; width: 100%; max-width: 400px; text-align: center;
             margin-bottom: 24px;
         }
         #login input {
-            width: 100%; max-width: 400px; border: 1px solid #111;
+            width: 100%; max-width: 400px; border: 1px solid #3a3a3a;
             padding: 12px; font-size: 1rem; text-align: center;
-            letter-spacing: 4px; background: #fff; margin-bottom: 8px;
+            letter-spacing: 4px; background: #1a1a1a; color: #e0d5c5; margin-bottom: 8px;
         }
+        #login input:focus { outline: 2px solid #c8a96e; }
         #login button {
-            background: #111; color: #fff; border: none; padding: 12px 40px;
+            background: #e0d5c5; color: #0f0f0f; border: none; padding: 12px 40px;
             font-family: 'Playfair Display SC', serif; font-size: 0.62rem;
             letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer;
         }
-        #login .err { color: #7a1f1f; font-style: italic; font-size: 0.9rem; margin-top: 8px; display: none; }
+        #login button:hover { background: #c8a96e; }
+        #login .err { color: #d97070; font-style: italic; font-size: 0.9rem; margin-top: 8px; display: none; }
 
         #app { display: none; max-width: 780px; margin: 0 auto; padding: 0 28px 60px; }
 
         .masthead {
-            border-top: 6px solid #111; padding-top: 10px; margin-top: 36px; text-align: center;
+            border-top: 6px solid #e0d5c5; padding-top: 10px; margin-top: 36px; text-align: center;
         }
         .masthead h1 {
             font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 8vw, 4.5rem);
             font-weight: 900; padding: 14px 0 10px;
         }
-        .masthead-bottom { border-top: 1px solid #111; border-bottom: 4px double #111; height: 6px; }
+        .masthead-bottom { border-top: 1px solid #3a3a3a; border-bottom: 4px double #3a3a3a; height: 6px; }
         .section-label {
             font-family: 'Playfair Display SC', serif; font-size: 0.6rem;
-            letter-spacing: 0.25em; text-transform: uppercase; color: #444;
-            text-align: center; padding: 12px 0; border-bottom: 1px solid #111;
+            letter-spacing: 0.25em; text-transform: uppercase; color: #7a7a7a;
+            text-align: center; padding: 12px 0; border-bottom: 1px solid #3a3a3a;
             margin-bottom: 28px;
         }
 
-        .form-section { border-top: 2px solid #111; padding-top: 20px; margin-bottom: 40px; }
+        .form-section { border-top: 2px solid #e0d5c5; padding-top: 20px; margin-bottom: 40px; }
         .form-section h2 {
             font-family: 'Playfair Display', serif; font-size: 1.4rem;
             margin-bottom: 16px;
         }
         input[type="text"], textarea {
-            width: 100%; border: 1px solid #ccc; padding: 12px;
+            width: 100%; border: 1px solid #3a3a3a; padding: 12px;
             font-family: 'Inter', sans-serif; font-size: 0.95rem;
-            margin-bottom: 12px; background: #fff;
+            margin-bottom: 12px; background: #1a1a1a; color: #e0d5c5;
         }
-        input[type="text"]:focus, textarea:focus { outline: 2px solid #111; border-color: #111; }
+        input[type="text"]:focus, textarea:focus { outline: 2px solid #c8a96e; border-color: #c8a96e; }
         textarea { height: 220px; resize: vertical; }
         .btn-publish {
-            background: #111; color: #fff; border: none; padding: 12px 32px;
+            background: #e0d5c5; color: #0f0f0f; border: none; padding: 12px 32px;
             font-family: 'Playfair Display SC', serif; font-size: 0.62rem;
             letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer;
         }
-        .btn-publish:hover { background: #444; }
-        .success-msg { color: green; font-style: italic; font-size: 0.9rem; margin-top: 8px; display: none; }
+        .btn-publish:hover { background: #c8a96e; }
+        .success-msg { color: #6dbf6d; font-style: italic; font-size: 0.9rem; margin-top: 8px; display: none; }
 
-        .posts-section { border-top: 2px solid #111; padding-top: 20px; }
+        .posts-section { border-top: 2px solid #e0d5c5; padding-top: 20px; }
         .posts-section h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 16px; }
         .post-item {
-            border-bottom: 1px solid #eee; padding: 16px 0;
+            border-bottom: 1px solid #232323; padding: 16px 0;
             display: flex; justify-content: space-between; align-items: center;
         }
         .post-item h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; }
-        .post-item .date { font-size: 11px; color: #888; margin-top: 4px; font-family: 'Playfair Display SC', serif; letter-spacing: 0.08em; }
+        .post-item .date { font-size: 11px; color: #7a7a7a; margin-top: 4px; font-family: 'Playfair Display SC', serif; letter-spacing: 0.08em; }
         .post-item-actions { display: flex; gap: 8px; flex-shrink: 0; }
         .btn-edit {
-            background: transparent; color: #111; border: 1px solid #111;
+            background: transparent; color: #e0d5c5; border: 1px solid #3a3a3a;
             padding: 6px 14px; font-family: 'Playfair Display SC', serif;
             font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase;
             cursor: pointer;
         }
-        .btn-edit:hover { background: #111; color: #fff; }
+        .btn-edit:hover { background: #e0d5c5; color: #0f0f0f; border-color: #e0d5c5; }
         .btn-delete {
-            background: transparent; color: #7a1f1f; border: 1px solid #7a1f1f;
+            background: transparent; color: #d97070; border: 1px solid #d97070;
             padding: 6px 14px; font-family: 'Playfair Display SC', serif;
             font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase;
             cursor: pointer;
         }
-        .btn-delete:hover { background: #7a1f1f; color: #fff; }
+        .btn-delete:hover { background: #d97070; color: #0f0f0f; }
         .btn-cancel {
-            background: transparent; color: #888; border: none;
+            background: transparent; color: #7a7a7a; border: none;
             padding: 12px 0 0 16px; font-family: 'Playfair Display SC', serif;
             font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase;
             cursor: pointer;
         }
-        .btn-cancel:hover { color: #111; }
-        .empty { font-style: italic; color: #888; font-size: 0.9rem; }
+        .btn-cancel:hover { color: #e0d5c5; }
+        .empty { font-style: italic; color: #555; font-size: 0.9rem; }
+
+        .home-btn {
+            display: inline-block;
+            background: #e0d5c5;
+            color: #0f0f0f;
+            text-decoration: none;
+            padding: 10px 28px;
+            font-family: 'Playfair Display SC', serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+        .home-btn:hover { background: #c8a96e; }
     </style>
 </head>
 <body>
@@ -123,7 +138,7 @@
         <div class="masthead-bottom"></div>
     </div>
     <div style="text-align:right; padding: 12px 0 0;">
-        <a href="index.html" style="display:inline-block; background:#111; color:#fff; text-decoration:none; padding:10px 28px; font-family:'Playfair Display SC',serif; font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase;">&#8592; Home</a>
+        <a href="index.html" class="home-btn">&#8592; Home</a>
     </div>
 
     <div class="section-label">Content Manager</div>
