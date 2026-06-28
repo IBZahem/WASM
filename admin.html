@@ -195,6 +195,9 @@ async function loadPosts() {
                 </div>
             </div>`;
     });
+
+    const editId = new URLSearchParams(window.location.search).get('edit');
+    if (editId && postsCache[editId]) editPost(editId);
 }
 
 function editPost(id) {

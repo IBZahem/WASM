@@ -224,12 +224,35 @@
             margin-top: 16px;
         }
 
+        .post-full-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
         .post-full-date {
             font-family: 'Playfair Display SC', serif;
             font-size: 0.68rem;
             letter-spacing: 0.08em;
             color: #666;
-            margin-bottom: 16px;
+        }
+
+        .btn-edit-post {
+            font-family: 'Playfair Display SC', serif;
+            font-size: 0.58rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: #111;
+            border: 1px solid #111;
+            padding: 6px 14px;
+            text-decoration: none;
+            background: transparent;
+        }
+
+        .btn-edit-post:hover {
+            background: #111;
+            color: #fff;
         }
 
         .post-full-title {
@@ -391,7 +414,10 @@
 
             container.innerHTML = `
                 <article class="post-full">
-                    <p class="post-full-date">${date}</p>
+                    <div class="post-full-header">
+                        <p class="post-full-date">${date}</p>
+                        <a class="btn-edit-post" href="admin.html?edit=${data.id}">Edit</a>
+                    </div>
                     <h2 class="post-full-title">${escapeHtml(data.title)}</h2>
                     <div class="post-body">${renderBody(data.content)}</div>
                 </article>`;
